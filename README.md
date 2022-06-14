@@ -1,4 +1,4 @@
-# starOS
+# khienhOS
 Developed Record clicks [HERE](https://hackmd.io/@zoanana990/KERNEL_DEV)
 ## Environment Setup
 Operating System: Ubuntu Linux 20.04
