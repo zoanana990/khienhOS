@@ -1,7 +1,18 @@
-ORG 0x7c00
+ORG  0
 BITS 16
 
+jmp 0x7c0: start   ;code segment 
+
 start:
+    cli             ; clear interrupt
+    mov ax, 0x7c0   ; segment address
+    mov ds, ax      ; data segment = 0x7c0
+    mov es, ax      ; extra segment = 0x7c0
+    mov ax, 0x00  
+    mov ss, ax
+    mov sp, 0x7c00  ; stack pointer is 0x7c00 (0x7c0 * 16)
+    sti             ; Enables Interrupt
+
     mov si, message
     call print
     jmp $       

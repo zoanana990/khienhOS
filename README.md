@@ -26,4 +26,5 @@ Expected:
 A QEMU window
 
 ## Some Resources
-[Ralf Brown's Interrupt List](https://www.ctyme.com/rbrown.htm)
+- [Ralf Brown's Interrupt List](https://www.ctyme.com/rbrown.htm)
+- [OSDev.org](https://wiki.osdev.org/Main_Page)
