@@ -15,6 +15,13 @@ times 33 db 0         ; padding 0 for bias override
 start:
     jmp 0x7c0:step2
 
+handle_zero:
+    mov ah, 0eh
+    mov al, 'A'
+    mov bx, 0x00
+    int 0x10
+    iret            ; return by interrupt
+
 step2:
     cli             ; clear interrupt
     mov ax, 0x7c0   ; segment address
@@ -24,6 +31,11 @@ step2:
     mov ss, ax
     mov sp, 0x7c00  ; stack pointer is 0x7c00 (0x7c0 * 16)
     sti             ; Enables Interrupt
+
+    mov word[ss:0x00], handle_zero
+    mov word[ss:0x02], 0x7c0
+
+    int 0
 
     mov si, message
     call print
