@@ -1,9 +1,21 @@
 ORG  0
 BITS 16
 
-jmp 0x7c0: start   ;code segment 
+_start:
+    jmp short start   ;code segment 
+    nop
+
+times 33 db 0         ; padding 0 for bias override
+
+; some bias format reserved some offset, 
+; if I don't reserved the address
+; bias may override the code, and it will crash our startup code
+; Thus, we rewrite this 
 
 start:
+    jmp 0x7c0:step2
+
+step2:
     cli             ; clear interrupt
     mov ax, 0x7c0   ; segment address
     mov ds, ax      ; data segment = 0x7c0
