@@ -30,8 +30,18 @@ In linux debian:
 ```shell
 $ sudo apt install build-essential bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo libisl-dev
 ```
+Download the [bunutils](https://sourceware.org/pub/binutils/snapshots/)
+Download the [cross compiler](https://ftp.lip6.fr/pub/gcc/releases/gcc-10.2.0/)
 
-install the [cross compiler](https://ftp.lip6.fr/pub/gcc/releases/gcc-10.2.0/)
+
+
+
+### GDB in this project
+```shell
+gdb
+
+(gdb) target remote | qemu-system-x86_64 -hda ./boot.bin -S -gdb stdio
+```
 
 
 ## Getting Start
