@@ -4,14 +4,16 @@
 
 # directory
 SRC           = ./src
+BUILD         = ./build
+BIN           = ./bin
 BOOT_SRC      = $(SRC)/boot
 
 # files
-KERNEL        = ./bin/kernel.bin
-FILES         = ./build/kernel.asm.o
-BOOT          = ./bin/boot.bin
-OS            = ./bin/os.bin
+KERNEL        = $(BIN)/kernel.bin
+BOOT          = $(BIN)/boot.bin
+OS            = $(BIN)/os.bin
 LINKER        = $(SRC)/linker.ld
+KERNEL_ASM    = $(BUILD)/kernel.asm.o
 
 #############################################
 # COMPILE TOOLS AND FLAGS
@@ -36,25 +38,25 @@ LDFLAGS = -g -relocatable
 all: clean $(BOOT) $(KERNEL)
     # read the file instead to use stdin
     # then we output to the os.bin
-	dd if=$(BOOT) >> ./bin/os.bin
-	dd if=$(KERNEL) >> ./bin/os.bin
+	dd if=$(BOOT) >> $(BIN)/os.bin
+	dd if=$(KERNEL) >> $(BIN)/os.bin
 
     # due to the padding issue, we need to padding zero to 512 bytes
-	dd if=/dev/zero bs=512 count=10 >> ./bin/os.bin
+	dd if=/dev/zero bs=512 count=10 >> $(BIN)/os.bin
 
-$(KERNEL): $(FILES)
-	$(PREFIX)$(LD) $(LDFLAGS) $(FILES) -o ./build/kernelfull.o
-	$(PREFIX)$(GCC) -T $(LINKER) $(CFLAGS) ./build/kernelfull.o -o $(KERNEL) 
+$(KERNEL): $(KERNEL_ASM)
+	$(PREFIX)$(LD) $(LDFLAGS) $(KERNEL_ASM) -o .$(BUILD)/kernelfull.o
+	$(PREFIX)$(GCC) -T $(LINKER) $(CFLAGS) $(BUILD)/kernelfull.o -o $(KERNEL) 
 
 $(BOOT): $(BOOT_SRC)/boot.asm
 	nasm -f bin $(BOOT_SRC)/boot.asm -o $(BOOT)
 
-$(FILES): $(SRC)/kernel.asm
-	nasm -f elf -g $(SRC)/kernel.asm -o $(FILES)
+$(KERNEL_ASM): $(SRC)/kernel.asm
+	nasm -f elf -g $(SRC)/kernel.asm -o $(KERNEL_ASM)
 
 clean:
-	rm -rf ./bin/*.bin
-	rm -rf ./build/*.o
+	rm -rf $(BIN)/*.bin
+	rm -rf $(BUILD)/*.o
 
 #############################################
 # OTHER TOOLS
@@ -63,7 +65,7 @@ qemu:
 	qemu-system-x86_64 -hda $(OS)
 
 asm:
-	ndisasm ./kernel.bin
+	ndisasm $(BIN)/kernel.bin
 
 bless:
-	bless ./bin/os.bin
+	bless $(BIN)/os.bin
