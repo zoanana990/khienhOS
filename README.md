@@ -75,7 +75,6 @@ gdb
 (gdb) target remote | qemu-system-x86_64 -hda ./boot.bin -S -gdb stdio
 ```
 
-
 ## Getting Start
 There are some notes in [Note](./note) folders, you can check the file and getting the background knowledge to develop this kernel
 

@@ -1,7 +1,11 @@
 #############################################
+# source
+#############################################
+INCLUDES      = -Iinc
+
+#############################################
 # DIRECTORY AND FILES
 #############################################
-
 # directory
 SRC           = ./src
 BUILD         = ./build
@@ -13,15 +17,15 @@ KERNEL        = $(BIN)/kernel.bin
 BOOT          = $(BIN)/boot.bin
 OS            = $(BIN)/os.bin
 LINKER        = $(SRC)/linker.ld
-KERNEL_ASM    = $(BUILD)/kernel.asm.o
+KERNEL_FILES  = $(BUILD)/kernel.asm.o $(BUILD)/kernel.o
 
 #############################################
 # COMPILE TOOLS AND FLAGS
 #############################################
 # compile flags and tools
 PREFIX = i686-elf-
-GCC = gcc
-LD = ld
+GCC    = gcc
+LD     = ld
 
 # -ffreestanding flags is one in which the standard library may not exist, 
 # and the program startup may not nexessarily be at main
@@ -29,7 +33,7 @@ LD = ld
 # that standard functions have their usual definition.
 CFLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce \
          -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -nodefaultlibs -O0     \
-         -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -Wall -Iinc  
+         -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -Wall -Iinc
 LDFLAGS = -g -relocatable
 
 #############################################
@@ -42,17 +46,20 @@ all: clean $(BOOT) $(KERNEL)
 	dd if=$(KERNEL) >> $(BIN)/os.bin
 
     # due to the padding issue, we need to padding zero to 512 bytes
-	dd if=/dev/zero bs=512 count=10 >> $(BIN)/os.bin
+	dd if=/dev/zero bs=512 count=100 >> $(BIN)/os.bin
 
-$(KERNEL): $(KERNEL_ASM)
-	$(PREFIX)$(LD) $(LDFLAGS) $(KERNEL_ASM) -o .$(BUILD)/kernelfull.o
+$(KERNEL): $(KERNEL_FILES)
+	$(PREFIX)$(LD) $(LDFLAGS) $(KERNEL_FILES) -o $(BUILD)/kernelfull.o
 	$(PREFIX)$(GCC) -T $(LINKER) $(CFLAGS) $(BUILD)/kernelfull.o -o $(KERNEL) 
 
 $(BOOT): $(BOOT_SRC)/boot.asm
 	nasm -f bin $(BOOT_SRC)/boot.asm -o $(BOOT)
 
-$(KERNEL_ASM): $(SRC)/kernel.asm
-	nasm -f elf -g $(SRC)/kernel.asm -o $(KERNEL_ASM)
+$(BUILD)/kernel.asm.o: $(SRC)/kernel.asm
+	nasm -f elf -g $(SRC)/kernel.asm -o $(BUILD)/kernel.asm.o
+
+$(BUILD)/kernel.o : $(SRC)/kernel.c
+	$(PREFIX)$(GCC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $(SRC)/kernel.c -o $(BUILD)/kernel.o
 
 clean:
 	rm -rf $(BIN)/*.bin

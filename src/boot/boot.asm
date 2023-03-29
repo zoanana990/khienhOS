@@ -33,9 +33,7 @@ step2:
     mov eax, cr0
     or eax, 0x1
     mov cr0, eax
-    ; jmp CODE_SEG:load32
-    jmp $
-
+    jmp CODE_SEG:load32
 
 ; GDT
 gdt_start:
