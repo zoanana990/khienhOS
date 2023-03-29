@@ -79,6 +79,11 @@ gdb
 ## Getting Start
 There are some notes in [Note](./note) folders, you can check the file and getting the background knowledge to develop this kernel
 
+compile the code by yourself
+```shell
+sudo chmod u+x ./build.sh
+```
+
 ## Some Resources
 - [Ralf Brown's Interrupt List](https://www.ctyme.com/rbrown.htm)
 - [OSDev.org](https://wiki.osdev.org/Main_Page)
