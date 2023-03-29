@@ -14,6 +14,7 @@ typedef enum
     FC_DARK_GRAY,
     FC_LIGHT_BLUE,
     FC_LIGHT_GREEN,
+    FC_LIGHT_CYAN,
     FC_LIGHT_RED,
     FC_LIGHT_PURPLE,
     FC_YELLOW,

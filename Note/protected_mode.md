@@ -27,7 +27,43 @@ How to enable A20 line:
 Definition in wiki:
 The Global Descriptor Table (GDT) is a binary data structure specific to the IA-32 and x86-64 architectures. It contains entries telling the CPU about memory segments. 
 
+### Interrupt descript table
+- Describe how interrupts are invoked in protected mode
+- Can be mapped anywhere in memory
+- Different from the interrupt vector table
 
+Interrupt descriptor
+
+| Name     | Bit   | Known as                   | Description                                                             |
+|----------|-------|----------------------------|-------------------------------------------------------------------------|
+| Offset   | 46-63 | offset 16-31               | The higher part of the offset to execute                                |
+| P        | 47    | Present                    | This should be set to zero for unused interrupts                        |
+| DPL      | 45-46 | Descriptor Privilege Level | The ring level the processor requires to call this interrupt            |
+| S        | 44    | Storage Segment            | Should be set to zero for trap gates                                    |
+| Type     | 40-43 | Gate type                  | The type of gate this interrupt is treated as                           |
+| O        | 32-49 | Unused 0-7                 | Unused bits in this structure                                           |
+| Selector | 16-31 | Selector 0-15              | The selector this interrupt is bounded to i.e. the kernel code selector |
+| Offset   | 0-15  | Offset 0-15                | The lower part of the offset to execute                                 |
+
+```c
+struct idt_desc{
+    u16 offset_1; /* offset bit 0 - 15 */
+    u16 selector; /* a code segment selector in GDT or LDT */
+    u8 zero;      /* unused, set to 0 */
+    u8 type_attr; /* type and attributes, see below */
+    u16 offset_2; /* offset bits 16 - 31*/
+}__attribute__((packed));
+```
+
+Interrupt Gate Types
+
+| Name                        | value       | Description                                                                                                                                              |
+|-----------------------------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 80386 32 bit task gate      | 0x05/0b0101 | Tasks gates reference TSS descriptors and cons can assist in multitasking when exceptions occur                                                          |
+| 80386 16 bit interrupt gate | 0x06/0b0110 | Interrupts gates are to be used for interrupts that we want ot invoke ourselves in our code                                                              |
+| 80386 16 bit trap gate      | 0x07/0b0111 | Trap gates are like interrupt gates however they are used for exceptions. They also disable interrupts on entry and reenable them on an `iret` instruction |
+| 80386 32 bit interrupt gate | 0x0E/0b1110 | Interrupts gates are to be used for interrupts that we want ot invoke ourselves in our code                                                              |
+| 80386 32 bit trap gate      | 0x0F/0b1111 | Trap gates are like interrupt gates however they are used for exceptions. They also disable interrupts on entry and reenable them on an `iret` instruction |
 
 Reference:
 [分段架構](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/chap2/segment.html)
