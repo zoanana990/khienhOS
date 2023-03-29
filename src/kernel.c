@@ -1,6 +1,7 @@
 #include <khienh/kernel.h>
 #include <khienh/type.h>
 #include <khienh/font_color.h>
+#include <idt/idt.h>
 
 static u16 *video_mem;
 static u16 console_row = 0;
@@ -57,7 +58,7 @@ size_t strlen(const c8* str)
 void print(const c8 *str)
 {
     size_t len = strlen(str);
-    for(int i = 0; i < len; i++)
+    for(i32 i = 0; i < len; i++)
     {
         console_write_char(str[i], FC_TEXT);
     }
@@ -67,5 +68,8 @@ void print(const c8 *str)
 void kernel_main()
 {
     console_init();
-    print("Hello World");
+    print("Hello World\n");
+
+    /* Initialize the idt */
+    idt_init();
 }

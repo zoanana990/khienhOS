@@ -11,7 +11,8 @@ Three steps here:
 
 ### Non Maskable Interrupt
 > Definition in wiki:
-> The Non-Maskable Interrupt (NMI) is a hardware-driven interrupt much like the PIC interrupts, but the NMI goes either directly to the CPU, or via another controller (e.g., the ISP)---in which case it can be masked.
+> The Non-Maskable Interrupt (NMI) is a hardware-driven interrupt much like the PIC interrupts, 
+> but the NMI goes either directly to the CPU, or via another controller (e.g., the ISP)---in which case it can be masked.
 
 
 ### A20 Line
@@ -25,9 +26,11 @@ How to enable A20 line:
 
 ### Global Descriptor Table
 Definition in wiki:
-The Global Descriptor Table (GDT) is a binary data structure specific to the IA-32 and x86-64 architectures. It contains entries telling the CPU about memory segments. 
+The Global Descriptor Table (GDT) is a binary data structure specific to the IA-32 and x86-64 architectures. 
+It contains entries telling the CPU about memory segments. 
 
-### Interrupt descript table
+## Interrupt descriptor table
+Source: [osdev Interrupt descriptor table](https://wiki.osdev.org/Interrupt_Descriptor_Table)
 - Describe how interrupts are invoked in protected mode
 - Can be mapped anywhere in memory
 - Different from the interrupt vector table
@@ -65,5 +68,33 @@ Interrupt Gate Types
 | 80386 32 bit interrupt gate | 0x0E/0b1110 | Interrupts gates are to be used for interrupts that we want ot invoke ourselves in our code                                                              |
 | 80386 32 bit trap gate      | 0x0F/0b1111 | Trap gates are like interrupt gates however they are used for exceptions. They also disable interrupts on entry and reenable them on an `iret` instruction |
 
-Reference:
-[分段架構](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/chap2/segment.html)
+Interrupt descriptors are stored in an array with index 0 defining interrupt zero `intr. 0` ..., index 1 
+```c
+struct idt_desc idt_desc[...];
+```
+
+IDTR
+
+| Name  | Bit   | Description                                            |
+|-------|-------|--------------------------------------------------------|
+| Limit | 0-15  | The length of the interrupt descriptor table minus one |
+| Base  | 16-47 | The address of the interrupt descriptor                |
+
+```c
+struct idtr_desc
+{
+    u16 limit;
+    u32 base;
+}__attribute__((packed));
+```
+
+Note
+- Interrupt descriptor table can be defined where we like in memory
+- Interrupt descriptor table are setup differently than the interrupt vector table
+- During an interrupt certain property can be pushed to the stack. 
+  The rules involved with this are quite complicated so we will discuss them as they come and they do not always apply
+- IDT is usually used in protected mode and IVT is used in real mode
+
+## Reference:
+- [分段架構](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/chap2/segment.html)
+- [Intel Architecture 保護模式架構](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)

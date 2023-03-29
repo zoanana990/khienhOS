@@ -11,13 +11,21 @@ SRC           = ./src
 BUILD         = ./build
 BIN           = ./bin
 BOOT_SRC      = $(SRC)/boot
+IDT_SRC		  = $(SRC)/idt
+MEMORY_SRC    = $(SRC)/memory
+IDT_BUILD     = $(BUILD)/idt
+MEMORY_BUILD  = $(BUILD)/memory
 
 # files
 KERNEL        = $(BIN)/kernel.bin
 BOOT          = $(BIN)/boot.bin
 OS            = $(BIN)/os.bin
 LINKER        = $(SRC)/linker.ld
-KERNEL_FILES  = $(BUILD)/kernel.asm.o $(BUILD)/kernel.o
+KERNEL_FILES  = $(BUILD)/kernel.asm.o 	\
+				$(BUILD)/kernel.o     	\
+				$(IDT_BUILD)/idt.asm.o	\
+				$(IDT_BUILD)/idt.o		\
+				$(MEMORY_BUILD)/memory.o\
 
 #############################################
 # COMPILE TOOLS AND FLAGS
@@ -40,6 +48,11 @@ LDFLAGS = -g -relocatable
 # BUILD
 #############################################
 all: clean $(BOOT) $(KERNEL)
+
+	# build the directory if the folder is not exist
+	$(shell if [ ! -e $(IDT_BUILD) ];then mkdir -p $(IDT_BUILD); fi)
+	$(shell if [ ! -e $(MEMORY_BUILD) ];then mkdir -p $(MEMORY_BUILD); fi)
+
     # read the file instead to use stdin
     # then we output to the os.bin
 	dd if=$(BOOT) >> $(BIN)/os.bin
@@ -49,17 +62,26 @@ all: clean $(BOOT) $(KERNEL)
 	dd if=/dev/zero bs=512 count=100 >> $(BIN)/os.bin
 
 $(KERNEL): $(KERNEL_FILES)
-	$(PREFIX)$(LD) $(LDFLAGS) $(KERNEL_FILES) -o $(BUILD)/kernelfull.o
-	$(PREFIX)$(GCC) -T $(LINKER) $(CFLAGS) $(BUILD)/kernelfull.o -o $(KERNEL) 
+	$(PREFIX)$(LD) $(LDFLAGS) $^ -o $(BUILD)/kernelfull.o
+	$(PREFIX)$(GCC) -T $(LINKER) $(CFLAGS) $(BUILD)/kernelfull.o -o $@
 
 $(BOOT): $(BOOT_SRC)/boot.asm
 	nasm -f bin $(BOOT_SRC)/boot.asm -o $(BOOT)
 
 $(BUILD)/kernel.asm.o: $(SRC)/kernel.asm
-	nasm -f elf -g $(SRC)/kernel.asm -o $(BUILD)/kernel.asm.o
+	nasm -f elf -g $^ -o $@
+
+$(IDT_BUILD)/idt.asm.o: $(IDT_SRC)/idt.asm
+	nasm -f elf -g $^ -o $@
 
 $(BUILD)/kernel.o : $(SRC)/kernel.c
-	$(PREFIX)$(GCC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $(SRC)/kernel.c -o $(BUILD)/kernel.o
+	$(PREFIX)$(GCC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
+
+$(IDT_BUILD)/idt.o : $(IDT_SRC)/idt.c
+	$(PREFIX)$(GCC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
+
+$(MEMORY_BUILD)/memory.o : $(MEMORY_SRC)/memory.c
+	$(PREFIX)$(GCC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
 
 clean:
 	rm -rf $(BIN)/*.bin
