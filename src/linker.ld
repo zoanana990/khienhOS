@@ -4,21 +4,27 @@ SECTIONS
 {
     /* offset */
     . = 1M;
-    .text :
+    .text : ALIGN(4096)
     {
         *(.text)
     }
-    .rodata :
+    .rodata : ALIGN(4096)
     {
         *(.rodata)
     }
-    .data :
+    .data : ALIGN(4096)
     {
         *(.data)
     }
-    .bss :
+    .bss : ALIGN(4096)
     {
         *(COMMON)
         *(.bss)
+    }
+
+    /* create an asm section to avoid the alignment issue */
+    .asm : ALIGN(4096)
+    {
+        *(.asm)
     }
 }
