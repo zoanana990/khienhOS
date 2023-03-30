@@ -1,5 +1,5 @@
-#ifndef TYPE_H
-#define TYPE_H
+#ifndef _TYPE_H_
+#define _TYPE_H_
 
 /* unsigned variable type */
 typedef unsigned long long u64;

@@ -27,12 +27,31 @@ KERNEL_FILES  = $(BUILD)/kernel.asm.o    \
                 $(IDT_BUILD)/idt.o       \
                 $(MEMORY_BUILD)/memory.o \
 
+
+# refer to the arm_hal project
+# TODO: refine the makefile with makefile functions
+C_SOURCES     = $(wildcard $(SRC)/*.c)          \
+                $(wildcard $(BOOT_SRC)/*.c)     \
+				$(wildcard $(IDT_SRC)/*.c)      \
+				$(wildcard $(MEMORY_SRC)/*.c)   \
+ASM_SOURCES   = $(wildcard $(SRC)/*.asm)        \
+				$(wildcard $(BOOT_SRC)/*.asm)   \
+				$(wildcard $(IDT_SRC)/*.asm)    \
+				$(wildcard $(MEMORY_SRC)/*.asm) \
+# list of objects
+OBJECTS = $(addprefix $(BUILD)/,$(notdir $(C_SOURCES:.c=.o)))
+vpath %.c $(sort $(dir $(C_SOURCES)))
+
+# list of ASM program objects
+OBJECTS += $(addprefix $(BUILD)/,$(notdir $(ASM_SOURCES:.s=.o)))
+vpath %.s $(sort $(dir $(ASM_SOURCES)))
+
 #############################################
 # COMPILE TOOLS AND FLAGS
 #############################################
 # compile flags and tools
 PREFIX = i686-elf-
-GCC    = gcc
+CC     = gcc
 LD     = ld
 
 # -ffreestanding flags is one in which the standard library may not exist,
@@ -65,7 +84,7 @@ all: clean $(BOOT) $(KERNEL)
 
 $(KERNEL): $(KERNEL_FILES)
 	$(PREFIX)$(LD) $(LDFLAGS) $^ -o $(BUILD)/kernelfull.o
-	$(PREFIX)$(GCC) -T $(LINKER) $(CFLAGS) $(BUILD)/kernelfull.o -o $@
+	$(PREFIX)$(CC) -T $(LINKER) $(CFLAGS) $(BUILD)/kernelfull.o -o $@
 
 $(BOOT): $(BOOT_SRC)/boot.asm
 	nasm -f bin $(BOOT_SRC)/boot.asm -o $(BOOT)
@@ -77,17 +96,20 @@ $(IDT_BUILD)/idt.asm.o: $(IDT_SRC)/idt.asm
 	nasm -f elf -g $^ -o $@
 
 $(BUILD)/kernel.o : $(SRC)/kernel.c
-	$(PREFIX)$(GCC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
+	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
 
 $(IDT_BUILD)/idt.o : $(IDT_SRC)/idt.c
-	$(PREFIX)$(GCC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
+	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
 
 $(MEMORY_BUILD)/memory.o : $(MEMORY_SRC)/memory.c
-	$(PREFIX)$(GCC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
+	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
 
 clean:
+	#TODO: recursive remove the files
 	rm -rf $(BIN)/*.bin
 	rm -rf $(BUILD)/*.o
+	rm -rf $(BUILD)/idt/*.o
+	rm -rf $(BUILD)/memory/*.o
 
 #############################################
 # OTHER TOOLS

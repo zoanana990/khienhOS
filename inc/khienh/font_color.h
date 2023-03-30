@@ -1,5 +1,5 @@
-#ifndef FONT_COLOR_H
-#define FONT_COLOR_H
+#ifndef _FONT_COLOR_H_
+#define _FONT_COLOR_H_
 
 typedef enum
 {

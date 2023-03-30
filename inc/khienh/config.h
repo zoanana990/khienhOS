@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
 
 /* code segment and data segment, same as boot.asm */
 #define KERNEL_CODE_SELECTOR 0x08

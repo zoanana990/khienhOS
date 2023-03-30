@@ -1,5 +1,5 @@
-#ifndef KERNEL_H
-#define KERNEL_H
+#ifndef _KERNEL_H_
+#define _KERNEL_H_
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 20
