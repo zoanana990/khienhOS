@@ -1,10 +1,8 @@
 #include <idt/idt.h>
 #include <khienh/config.h>
-<<<<<<< HEAD
 #include <khienh/kernel.h>
 #include <memory/memory.h>
-=======
->>>>>>> origin/master
+
 
 struct idt_desc idt_descriptors[KHIENHOS_TOTAL_INTERRUPTS];
 struct idtr_desc idtr_descriptor;
