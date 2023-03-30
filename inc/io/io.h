@@ -4,7 +4,7 @@
 /**
  * Reference: x86 Instruction Set Reference, IN, input from the port
  * description:
- *
+ *     we will implement these four functions in assembly code
  * */
 
 #include <khienh/type.h>

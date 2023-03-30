@@ -10,11 +10,15 @@ INCLUDES      = -Iinc
 SRC           = ./src
 BUILD         = ./build
 BIN           = ./bin
+
 BOOT_SRC      = $(SRC)/boot
 IDT_SRC       = $(SRC)/idt
 MEMORY_SRC    = $(SRC)/memory
+IO_SRC        = $(SRC)/io
+
 IDT_BUILD     = $(BUILD)/idt
 MEMORY_BUILD  = $(BUILD)/memory
+IO_SRC        = $(BUILD)/io
 
 # files
 KERNEL        = $(BIN)/kernel.bin
@@ -93,6 +97,9 @@ $(BUILD)/kernel.asm.o: $(SRC)/kernel.asm
 	nasm -f elf -g $^ -o $@
 
 $(IDT_BUILD)/idt.asm.o: $(IDT_SRC)/idt.asm
+	nasm -f elf -g $^ -o $@
+
+$(IDT_BUILD)/io.asm.o: $(IDT_SRC)/io.asm
 	nasm -f elf -g $^ -o $@
 
 $(BUILD)/kernel.o : $(SRC)/kernel.c

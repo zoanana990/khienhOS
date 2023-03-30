@@ -162,7 +162,38 @@ void free(void *ptr)
 ```
 
 ### Our heap implementation
+- Will consist of a giant table which describes a giant of free memory in the system.  
+  This table will describe which memory is taken, which memory is free and so on. We will call it "entry table"
+- Will have another pointer to a giant piece of the memory, this will be the actual heap data its itself 
+  that users can use `malloc`. We will cal this "data pool". If our heap can allocate 100 MB of RAM 
+  then the heap data pool will be 100 MB in size
+- Our heap implementation will be block based, each address returned from `malloc` will be aligned to 4096 and  
+  will at least be 4096 in size
+- If you request to have 50 bytes, there are 4096 bytes for you
+
+### Entry table
+- Composes of an array of 1 byte values that represent an entry in our heap data pool
+- Array size is calculated by taking the heap data pool size and dividing it by our block size of 4096 bytes.
+  we are left with the total number of entries we need in our array
+
+> we want a 100MB heap then the math is 100MB/4096 = 25600 bytes in our entry table
+> if our heap data pool is at address `0x1000000` then entry zero in our table will represent address `0x1000000`
+> Entry one will represent address `0x1001000`, and entry two will represent `0x1002000`
+
+#### Entry structure
+| HAS_N | IS_FIRST | 0   | 0   | ET_3   | ET_2   | ET_1   | ET_0 |
+|-------|----------|-----|-----|--------|--------|--------|------|
+
+Where
+- HAS_N: set if the entry to the right of us is part of our allocation
+- IS_FIRST: set if there is the first entry of our allocation
+> Each entry byte describes 4096 bytes of data in the heap data pool
+
+Entry types:
+HEAP_BLOCK_TABLE_ENTRY_TAKEN : The entry is taken and the address cannot be used
+HEAP_BLOCK_TABLE_ENTRY_FREE  : The entry is free and may be used
+
+
 
 ## Reference:
-- [分段架構](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/chap2/segment.html)
 - [Intel Architecture 保護模式架構](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)
