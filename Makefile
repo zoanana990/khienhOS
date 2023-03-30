@@ -55,12 +55,12 @@ all: clean $(BOOT) $(KERNEL)
 	$(shell if [ ! -e $(IDT_BUILD) ];then mkdir -p $(IDT_BUILD); fi)
 	$(shell if [ ! -e $(MEMORY_BUILD) ];then mkdir -p $(MEMORY_BUILD); fi)
 
-    # read the file instead to use stdin
-    # then we output to the os.bin
+	# read the file instead to use stdin
+	# then we output to the os.bin
 	dd if=$(BOOT) >> $(BIN)/os.bin
 	dd if=$(KERNEL) >> $(BIN)/os.bin
 
-    # due to the padding issue, we need to padding zero to 512 bytes
+	# due to the padding issue, we need to padding zero to 512 bytes
 	dd if=/dev/zero bs=512 count=100 >> $(BIN)/os.bin
 
 $(KERNEL): $(KERNEL_FILES)
