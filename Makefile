@@ -11,7 +11,7 @@ SRC           = ./src
 BUILD         = ./build
 BIN           = ./bin
 BOOT_SRC      = $(SRC)/boot
-IDT_SRC		  = $(SRC)/idt
+IDT_SRC       = $(SRC)/idt
 MEMORY_SRC    = $(SRC)/memory
 IDT_BUILD     = $(BUILD)/idt
 MEMORY_BUILD  = $(BUILD)/memory
@@ -21,11 +21,11 @@ KERNEL        = $(BIN)/kernel.bin
 BOOT          = $(BIN)/boot.bin
 OS            = $(BIN)/os.bin
 LINKER        = $(SRC)/linker.ld
-KERNEL_FILES  = $(BUILD)/kernel.asm.o 	\
-				$(BUILD)/kernel.o     	\
-				$(IDT_BUILD)/idt.asm.o	\
-				$(IDT_BUILD)/idt.o		\
-				$(MEMORY_BUILD)/memory.o\
+KERNEL_FILES  = $(BUILD)/kernel.asm.o    \
+                $(BUILD)/kernel.o        \
+                $(IDT_BUILD)/idt.asm.o   \
+                $(IDT_BUILD)/idt.o       \
+                $(MEMORY_BUILD)/memory.o \
 
 #############################################
 # COMPILE TOOLS AND FLAGS
@@ -35,9 +35,9 @@ PREFIX = i686-elf-
 GCC    = gcc
 LD     = ld
 
-# -ffreestanding flags is one in which the standard library may not exist, 
+# -ffreestanding flags is one in which the standard library may not exist,
 # and the program startup may not nexessarily be at main
-# The option -ffreestanding directs the compiler to not assume 
+# The option -ffreestanding directs the compiler to not assume
 # that standard functions have their usual definition.
 CFLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce \
          -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -nodefaultlibs -O0     \
@@ -50,6 +50,8 @@ LDFLAGS = -g -relocatable
 all: clean $(BOOT) $(KERNEL)
 
 	# build the directory if the folder is not exist
+	$(shell if [ ! -e $(BIN) ];then mkdir -p $(BIN); fi)
+	$(shell if [ ! -e $(BUILD) ];then mkdir -p $(BUILD); fi)
 	$(shell if [ ! -e $(IDT_BUILD) ];then mkdir -p $(IDT_BUILD); fi)
 	$(shell if [ ! -e $(MEMORY_BUILD) ];then mkdir -p $(MEMORY_BUILD); fi)
 
