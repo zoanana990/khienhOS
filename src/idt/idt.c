@@ -1,11 +1,15 @@
 #include <idt/idt.h>
 #include <khienh/config.h>
+<<<<<<< HEAD
 #include <khienh/kernel.h>
 #include <memory/memory.h>
+=======
+>>>>>>> origin/master
 
 struct idt_desc idt_descriptors[KHIENHOS_TOTAL_INTERRUPTS];
 struct idtr_desc idtr_descriptor;
 
+<<<<<<< HEAD
 extern void idt_load(struct idtr_desc* ptr);
 
 void idt_zero(struct idtr_desc *ptr)
@@ -37,4 +41,9 @@ void idt_init()
 
     /* load the interrupt descriptor table */
     idt_load(&idtr_descriptor);
+=======
+void idt_init()
+{
+
+>>>>>>> origin/master
 }
