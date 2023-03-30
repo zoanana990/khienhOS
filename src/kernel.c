@@ -64,7 +64,6 @@ void print(const c8 *str)
     }
 }
 
-
 void kernel_main()
 {
     console_init();
