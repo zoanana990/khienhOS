@@ -190,9 +190,15 @@ Where
 > Each entry byte describes 4096 bytes of data in the heap data pool
 
 Entry types:
-HEAP_BLOCK_TABLE_ENTRY_TAKEN : The entry is taken and the address cannot be used
-HEAP_BLOCK_TABLE_ENTRY_FREE  : The entry is free and may be used
+- HEAP_BLOCK_TABLE_ENTRY_TAKEN : The entry is taken and the address cannot be used
+- HEAP_BLOCK_TABLE_ENTRY_FREE  : The entry is free and may be used
 
+Data pool:
+- Simply a raw flat array of thousands or millions of bytes that our heap implementation can give to people who need memory
+
+A example
+- Firstly we assume our base address is `0x1000000`
+- We assume our heap is 100 MB, that is 25600 entries
 
 
 ## Reference:
