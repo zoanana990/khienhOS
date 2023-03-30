@@ -44,6 +44,8 @@ Definition in wiki:
 The Global Descriptor Table (GDT) is a binary data structure specific to the IA-32 and x86-64 architectures. 
 It contains entries telling the CPU about memory segments. 
 
+-----------------------------------
+
 ## Interrupt descriptor table
 Source: [osdev Interrupt descriptor table](https://wiki.osdev.org/Interrupt_Descriptor_Table)
 - Describe how interrupts are invoked in protected mode
@@ -75,12 +77,12 @@ struct idt_desc{
 
 Interrupt Gate Types
 
-| Name                        | value       | Description                                                                                                                                              |
-|-----------------------------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 80386 32 bit task gate      | 0x05/0b0101 | Tasks gates reference TSS descriptors and cons can assist in multitasking when exceptions occur                                                          |
-| 80386 16 bit interrupt gate | 0x06/0b0110 | Interrupts gates are to be used for interrupts that we want ot invoke ourselves in our code                                                              |
+| Name                        | value       | Description                                                                                                                                                |
+|-----------------------------|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 80386 32 bit task gate      | 0x05/0b0101 | Tasks gates reference TSS descriptors and cons can assist in multitasking when exceptions occur                                                            |
+| 80386 16 bit interrupt gate | 0x06/0b0110 | Interrupts gates are to be used for interrupts that we want ot invoke ourselves in our code                                                                |
 | 80386 16 bit trap gate      | 0x07/0b0111 | Trap gates are like interrupt gates however they are used for exceptions. They also disable interrupts on entry and reenable them on an `iret` instruction |
-| 80386 32 bit interrupt gate | 0x0E/0b1110 | Interrupts gates are to be used for interrupts that we want ot invoke ourselves in our code                                                              |
+| 80386 32 bit interrupt gate | 0x0E/0b1110 | Interrupts gates are to be used for interrupts that we want ot invoke ourselves in our code                                                                |
 | 80386 32 bit trap gate      | 0x0F/0b1111 | Trap gates are like interrupt gates however they are used for exceptions. They also disable interrupts on entry and reenable them on an `iret` instruction |
 
 Interrupt descriptors are stored in an array with index 0 defining interrupt zero `intr. 0` ..., index 1 
@@ -109,6 +111,46 @@ Note
 - During an interrupt certain property can be pushed to the stack. 
   The rules involved with this are quite complicate, so we will discuss them as they come and they do not always apply
 - IDT is usually used in protected mode and IVT is used in real mode
+
+### Programmable Interrupt Controller (PIC)
+- Allows hardware to interrupt the processor state
+  - The programmable interrupt controller allows different types of hardware to interrupt 
+    the processor such as the hard disk, keyboard and more...
+- Programmable
+- Requires interrupt acknowledge
+
+Standard IRQ:
+
+| IRQ | Description                               |
+|-----|-------------------------------------------|
+| 0   | Timer Interrupt                           |
+| 1   | Keyboard Interrupt                        |
+| 2   | Cascade (used internally by the two PICs) |
+| 3   | COM2                                      |
+| 4   | COM1                                      |
+| 5   | LPT2                                      |
+| 6   | Floppy Disk                               |
+| 7   | LPT1                                      |
+| ... | ...                                       |
+
+![img.png](image/img.png)
+
+Reference: [PIC introduction](https://stenlyho.blogspot.com/2008/08/pic.html)
+
+- IRQ are mapped to a starting interrupt for example lets choose 0x20
+- IRQ 0 would then be interrupt 0x20
+- IRQ 1 would then be interrupt 0x21
+- IRQ 2 would then be interrupt 0x22
+
+> By default, some of the IRQ are mapped to interrupts 8-15 this is a problem as these
+> interrupts are reserved in protected mode for exception so we are required to remap the PIC
+
+#### Master and slave
+- There are two PIC in the system, one is the master and the other is slave
+- Master control IRQ 0-7 while slave control IRQ 8-15.
+- 0x20, 0x21 -> master IRQ; 0xa0, 0xa1 -> slave IRQ
+
+-----------------------------------
 
 ## heap
 - Heap is a giant memory region that can be shared in a controlled manner
@@ -200,6 +242,22 @@ A example
 - Firstly we assume our base address is `0x1000000`
 - We assume our heap is 100 MB, that is 25600 entries
 
+### Free
+- Calculate the block number based on the address provided to us to free
+- Go through the entry table starting at the block number we have calculated, set each entry to "0x00" until 
+  we reach the last block of the allocation
+- We know how many blocks we need to free because the current block we are freeing will not have the "HAS_N" bit set in the entry byte
+
+### pros and cons
+pros
+- Fast to allocate blocks of memory
+- Fast to free blocks of memory
+- Can be written in under 200 lines of code
+cons
+- Memory fragmentation
+- wasted space
+-----------------------------------
+## Paging
 
 ## Reference:
-- [Intel Architecture 保護模式架構](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)
+- [Intel Protected Architecture](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)
