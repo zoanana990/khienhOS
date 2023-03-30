@@ -18,7 +18,7 @@ IO_SRC        = $(SRC)/io
 
 IDT_BUILD     = $(BUILD)/idt
 MEMORY_BUILD  = $(BUILD)/memory
-IO_SRC        = $(BUILD)/io
+IO_BUILD      = $(BUILD)/io
 
 # files
 KERNEL        = $(BIN)/kernel.bin
@@ -30,6 +30,9 @@ KERNEL_FILES  = $(BUILD)/kernel.asm.o    \
                 $(IDT_BUILD)/idt.asm.o   \
                 $(IDT_BUILD)/idt.o       \
                 $(MEMORY_BUILD)/memory.o \
+                $(MEMORY_BUILD)/heap.o   \
+                $(MEMORY_BUILD)/kheap.o  \
+                $(IO_BUILD)/io.asm.o     \
 
 
 # refer to the arm_hal project
@@ -71,13 +74,6 @@ LDFLAGS = -g -relocatable
 # BUILD
 #############################################
 all: clean $(BOOT) $(KERNEL)
-
-	# build the directory if the folder is not exist
-	$(shell if [ ! -e $(BIN) ];then mkdir -p $(BIN); fi)
-	$(shell if [ ! -e $(BUILD) ];then mkdir -p $(BUILD); fi)
-	$(shell if [ ! -e $(IDT_BUILD) ];then mkdir -p $(IDT_BUILD); fi)
-	$(shell if [ ! -e $(MEMORY_BUILD) ];then mkdir -p $(MEMORY_BUILD); fi)
-
 	# read the file instead to use stdin
 	# then we output to the os.bin
 	dd if=$(BOOT) >> $(BIN)/os.bin
@@ -87,19 +83,23 @@ all: clean $(BOOT) $(KERNEL)
 	dd if=/dev/zero bs=512 count=100 >> $(BIN)/os.bin
 
 $(KERNEL): $(KERNEL_FILES)
+	$(shell if [ ! -e $(BIN) ];then mkdir -p $(BIN); fi)
 	$(PREFIX)$(LD) $(LDFLAGS) $^ -o $(BUILD)/kernelfull.o
 	$(PREFIX)$(CC) -T $(LINKER) $(CFLAGS) $(BUILD)/kernelfull.o -o $@
 
 $(BOOT): $(BOOT_SRC)/boot.asm
+	$(shell if [ ! -e $(BUILD) ];then mkdir -p $(BUILD); fi)
 	nasm -f bin $(BOOT_SRC)/boot.asm -o $(BOOT)
 
 $(BUILD)/kernel.asm.o: $(SRC)/kernel.asm
 	nasm -f elf -g $^ -o $@
 
 $(IDT_BUILD)/idt.asm.o: $(IDT_SRC)/idt.asm
+	$(shell if [ ! -e $(IDT_BUILD) ];then mkdir -p $(IDT_BUILD); fi)
 	nasm -f elf -g $^ -o $@
 
-$(IDT_BUILD)/io.asm.o: $(IDT_SRC)/io.asm
+$(IO_BUILD)/io.asm.o: $(IO_SRC)/io.asm
+	$(shell if [ ! -e $(IO_BUILD) ];then mkdir -p $(IO_BUILD); fi)
 	nasm -f elf -g $^ -o $@
 
 $(BUILD)/kernel.o : $(SRC)/kernel.c
@@ -109,6 +109,13 @@ $(IDT_BUILD)/idt.o : $(IDT_SRC)/idt.c
 	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
 
 $(MEMORY_BUILD)/memory.o : $(MEMORY_SRC)/memory.c
+	$(shell if [ ! -e $(MEMORY_BUILD) ];then mkdir -p $(MEMORY_BUILD); fi)
+	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
+
+$(MEMORY_BUILD)/heap.o : $(MEMORY_SRC)/heap.c
+	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
+
+$(MEMORY_BUILD)/kheap.o : $(MEMORY_SRC)/kheap.c
 	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
 
 clean:
