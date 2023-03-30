@@ -1,6 +1,12 @@
 #ifndef _IO_H_
 #define _IO_H_
 
+/**
+ * Reference: x86 Instruction Set Reference, IN, input from the port
+ * description:
+ *
+ * */
+
 #include <khienh/type.h>
 
 /* read one byte from the port */
