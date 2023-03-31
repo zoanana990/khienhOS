@@ -60,7 +60,7 @@ kerr_no_t heap_create(heap_t *heap, void *ptr, void *end, heap_table_t *table)
 
     /* initialize the heap region to free */
     size_t table_size = sizeof(heap_block_entry_t) * table->total;
-    memset(table->entry, HEAP_BLOCK_IS_FREE, table_size);
+    memset(table->entry, HEAP_BLOCK_TABLE_ENTRY_FREE, table_size);
 
 out:
     return ret;
@@ -161,12 +161,26 @@ void *heap_malloc(heap_t *heap, size_t size)
     return heap_malloc_block(heap, total_blocks);
 }
 
-void heap_free_block(heap_t heap, u32 starting_block)
+i32 heap_address_to_block(heap_t *heap, void *address)
 {
+    return ((i32) (address - heap->saddr)) / KHIENHOS_HEAP_BLOCK_SIZE;
+}
 
+void heap_free_block(heap_t *heap, u32 starting_block)
+{
+    heap_table_t *table = heap->table;
+    for(i32 i = starting_block; i < (int)table->total; i++)
+    {
+        heap_block_entry_t entry = table->entry[i];
+        table->entry[i] = HEAP_BLOCK_TABLE_ENTRY_FREE;
+        if(!(entry & HEAP_BLOCK_HAS_NEXT))
+        {
+            break;
+        }
+    }
 }
 
 void heap_free(heap_t *heap, void *ptr)
 {
-    return;
+    heap_free_block(heap, heap_address_to_block(heap, ptr));
 }

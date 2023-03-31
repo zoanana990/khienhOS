@@ -10,7 +10,7 @@
 #define HEAP_BLOCK_HAS_NEXT           0b10000000
 #define HEAP_BLOCK_IS_FIRST           0b1000000
 
-typedef u8 heap_block_entry_t;
+typedef u32 heap_block_entry_t;
 
 typedef struct heap_table
 {

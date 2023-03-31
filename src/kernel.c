@@ -1,6 +1,7 @@
 #include <khienh/kernel.h>
 #include <khienh/type.h>
 #include <khienh/font_color.h>
+#include <memory/kheap.h>
 #include <idt/idt.h>
 #include <io/io.h>
 
@@ -72,4 +73,10 @@ void kernel_main()
 
     /* Initialize the idt */
     idt_init();
+
+    /* initialize the heap */
+    kheap_init();
+
+    /* enable interrupt */
+    enable_interrupt();
 }
