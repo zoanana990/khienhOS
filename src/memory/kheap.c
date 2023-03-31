@@ -18,3 +18,8 @@ void kheap_init()
         print("Failed to create heap\n");
     }
 }
+
+void *kmalloc(size_t size)
+{
+
+}

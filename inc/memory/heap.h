@@ -8,7 +8,7 @@
 #define HEAP_BLOCK_TABLE_ENTRY_FREE   0x00
 
 #define HEAP_BLOCK_HAS_NEXT           0b10000000
-#define HEAP_BLOCK_IS_FREE            0b1000000
+#define HEAP_BLOCK_IS_FIRST           0b1000000
 
 typedef u8 heap_block_entry_t;
 
@@ -26,6 +26,6 @@ typedef struct heap
 
 kerr_no_t heap_create(heap_t *heap, void *ptr, void *end, heap_table_t *table);
 void *heap_malloc(heap_t *heap, size_t size);
-void heap_free(void *ptr);
+void heap_free(heap_t *heap, void *ptr);
 
 #endif // KHIENHOS_HEAP_H

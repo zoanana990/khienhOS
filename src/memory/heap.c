@@ -66,10 +66,92 @@ out:
     return ret;
 }
 
+static int heap_get_entry_type(heap_block_entry_t entry)
+{
+    return entry & 0xf;
+}
 
+/*
+ * return
+ * <0 : error occur
+ * */
+i32 heap_get_start_block(heap_t *heap, u32 total_blocks)
+{
+    heap_table_t *table = heap->table;
+
+    /* current block */
+    int bc = 0;
+
+    /* previous block */
+    int bs = -1;
+
+    /* traverse all the heap region */
+    for(size_t i = 0; i < table->total; i++)
+    {
+        if(heap_get_entry_type(table->entry[i]) != HEAP_BLOCK_TABLE_ENTRY_FREE)
+        {
+            bc = 0, bs = -1;
+            continue;
+        }
+
+        if(bs == -1)
+            bs = i;
+
+        bc++;
+
+        if(bc == total_blocks)
+            break;
+    }
+
+    if(bs == -1)
+        return -1;
+
+    return bs;
+}
+
+void *heap_block_to_address(heap_t *heap, u32 block)
+{
+    return heap->saddr + (block * KHIENHOS_HEAP_BLOCK_SIZE);
+}
+
+void heap_mask_blocks_taken(heap_t *heap, i32 start_block, i32 total_blocks)
+{
+    i32 end_block = start_block + total_blocks - 1;
+
+    heap_block_entry_t entry = HEAP_BLOCK_TABLE_ENTRY_TAKEN | HEAP_BLOCK_IS_FIRST;
+    if(total_blocks > 1)
+    {
+        entry |= HEAP_BLOCK_HAS_NEXT;
+    }
+
+    for(i32 i = 0; i <= end_block; i++)
+    {
+        heap->table->entry[i] = entry;
+        entry = HEAP_BLOCK_TABLE_ENTRY_TAKEN;
+        if(i != end_block - 1)
+        {
+            entry |= HEAP_BLOCK_HAS_NEXT;
+        }
+    }
+}
+
+/* malloc the block here and return a pointer in the data pool */
 void *heap_malloc_block(heap_t *heap, u32 total_blocks)
 {
-    return 0;
+    void *address = 0;
+
+    i32 start_block = heap_get_start_block(heap, total_blocks);
+
+    if(start_block < 0)
+        goto out;
+
+    address = heap_block_to_address(heap, start_block);
+
+    /* mark the block is taken */
+    heap_mask_blocks_taken(heap, start_block, total_blocks);
+
+    out:
+    return address;
 }
 
 void *heap_malloc(heap_t *heap, size_t size)
@@ -84,7 +166,7 @@ void heap_free_block(heap_t heap, u32 starting_block)
 
 }
 
-void heap_free(void *ptr)
+void heap_free(heap_t *heap, void *ptr)
 {
     return;
 }

@@ -5,4 +5,7 @@
 #include <khienh/print.h>
 #include <memory/heap.h>
 
+void kheap_init();
+void *kmalloc(size_t size);
+
 #endif // KHIENHOS_KHEAP_H
