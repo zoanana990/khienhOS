@@ -2,6 +2,7 @@
 #include <khienh/type.h>
 #include <khienh/font_color.h>
 #include <memory/kheap.h>
+#include <memory/page.h>
 #include <idt/idt.h>
 #include <io/io.h>
 
@@ -79,4 +80,6 @@ void kernel_main()
 
     /* enable interrupt */
     enable_interrupt();
+
+    page_dummy();
 }

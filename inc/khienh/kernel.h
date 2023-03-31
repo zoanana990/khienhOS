@@ -4,6 +4,7 @@
 #include <khienh/type.h>
 #include <khienh/print.h>
 
+
 void kernel_main();
 
 #endif

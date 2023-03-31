@@ -33,6 +33,7 @@ KERNEL_FILES  = $(BUILD)/kernel.asm.o    \
                 $(MEMORY_BUILD)/memory.o \
                 $(MEMORY_BUILD)/heap.o   \
                 $(MEMORY_BUILD)/kheap.o  \
+                $(MEMORY_BUILD)/page.o
 
 # refer to the arm_hal project
 # TODO: refine the makefile with makefile functions
@@ -57,8 +58,8 @@ vpath %.s $(sort $(dir $(ASM_SOURCES)))
 #############################################
 # compile flags and tools
 PREFIX = i686-elf-
-CC     = gcc
-LD     = ld
+CC     = $(PREFIX)gcc
+LD     = $(PREFIX)ld
 
 # -ffreestanding flags is one in which the standard library may not exist,
 # and the program startup may not nexessarily be at main
@@ -83,8 +84,8 @@ all: clean $(BOOT) $(KERNEL)
 
 $(KERNEL): $(KERNEL_FILES)
 	$(shell if [ ! -e $(BIN) ];then mkdir -p $(BIN); fi)
-	$(PREFIX)$(LD) $(LDFLAGS) $^ -o $(BUILD)/kernelfull.o
-	$(PREFIX)$(CC) -T $(LINKER) $(CFLAGS) $(BUILD)/kernelfull.o -o $@
+	$(LD) $(LDFLAGS) $^ -o $(BUILD)/kernelfull.o
+	$(CC) -T $(LINKER) $(CFLAGS) $(BUILD)/kernelfull.o -o $@
 
 $(BOOT): $(BOOT_SRC)/boot.asm
 	$(shell if [ ! -e $(BUILD) ];then mkdir -p $(BUILD); fi)
@@ -101,21 +102,8 @@ $(IO_BUILD)/io.asm.o: $(IO_SRC)/io.asm
 	$(shell if [ ! -e $(IO_BUILD) ];then mkdir -p $(IO_BUILD); fi)
 	nasm -f elf -g $^ -o $@
 
-$(BUILD)/kernel.o : $(SRC)/kernel.c
-	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
-
-$(IDT_BUILD)/idt.o : $(IDT_SRC)/idt.c
-	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
-
-$(MEMORY_BUILD)/memory.o : $(MEMORY_SRC)/memory.c
-	$(shell if [ ! -e $(MEMORY_BUILD) ];then mkdir -p $(MEMORY_BUILD); fi)
-	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
-
-$(MEMORY_BUILD)/heap.o : $(MEMORY_SRC)/heap.c
-	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
-
-$(MEMORY_BUILD)/kheap.o : $(MEMORY_SRC)/kheap.c
-	$(PREFIX)$(CC) $(INCLUDES) $(CFLAGS) -std=gnu99 -c $^ -o $@
+$(BUILD)/%.o: %.c Makefile | $(BUILD)
+	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
 	#TODO: recursive remove the files
