@@ -29,11 +29,10 @@ KERNEL_FILES  = $(BUILD)/kernel.asm.o    \
                 $(BUILD)/kernel.o        \
                 $(IDT_BUILD)/idt.asm.o   \
                 $(IDT_BUILD)/idt.o       \
+				$(IO_BUILD)/io.asm.o     \
                 $(MEMORY_BUILD)/memory.o \
                 $(MEMORY_BUILD)/heap.o   \
                 $(MEMORY_BUILD)/kheap.o  \
-                $(IO_BUILD)/io.asm.o     \
-
 
 # refer to the arm_hal project
 # TODO: refine the makefile with makefile functions

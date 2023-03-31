@@ -5,8 +5,8 @@
 #define VGA_HEIGHT 20
 
 #include <khienh/type.h>
+#include <khienh/print.h>
 
 void kernel_main();
-void print(const c8 *str);
 
 #endif

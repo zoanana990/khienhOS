@@ -1,5 +1,6 @@
 # khienhOS
-Developed Record clicks [HERE](https://hackmd.io/@zoanana990/KERNEL_DEV)
+This is a simple x86_64 unix-like operating system. 
+In this OS, I will implement print, heap, paging, file system etc.
 
 ## Environment Setup
 Operating System: Ubuntu Linux 20.04
