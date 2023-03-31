@@ -133,7 +133,7 @@ Standard IRQ:
 | 7   | LPT1                                      |
 | ... | ...                                       |
 
-![img.png](image/img.png)
+![img.png](image/IRQ_table.png)
 
 Reference: [PIC introduction](https://stenlyho.blogspot.com/2008/08/pic.html)
 
@@ -272,7 +272,49 @@ cons
 ### virtual address vs physical address
 - Virtual address are addresses that are not pointing to the address in memory that their value says they are
   E.g. virtual memory address 0x100000 might point to physical address 0x200000 as an example
-- Physical addresses
+- Physical addresses are absolute addresses in memory whose value points to the same address in memory. 
+  E.g. physical memory address 0x100000 is actual address
+- virtual address and physical address is the method to access the memory
+![img.png](image/vm_mapping.png)
+
+Structure overview:
+![img.png](image/vm_directory_table.png)
+- 1024 pages directories point to 1024 pages tables
+- 1024 pages table entries per page table
+- each page table entry covers 4096 bytes of memory
+- each "4096" byte block of memory is called a page
+- 1024*1024*4096 = 4GB of addressable memory
+- Thus, the page directory structure
+  - Holds a pointer to a page table
+  - Holds attributes
+
+### Page directory structure
+![img.png](image/Page_Directory_Structure.png)
+
+Page fault exception:
+- The cpu will call the page fault interrupt 0x14 when there was a problem with paging
+- Exception:
+  - Access a page in memory that does not have its `P(present)` bit set
+  - Invoked if you access a page that is for supervisor, but you are not supervisor
+  - Invoked if you write a page that is read only, and you are not supervisor
+
+Hiding memory from processor
+- If we give each process, its own page directory table then we can map the memory for the processor
+  however we want it to be. We can make it so the processor can only see itself
+- Hiding memory can be achieved by switching the page directories when moving between processes
+- All processes can access the same virtual addresses, but they will point to different physical addresses
+
+Illusion of memory
+- We can pretend we have amount of memory even if we do not
+- This is achieved by creating page tables that are not present. Once a process accesses this non-present address a
+  page fault will occur. We can then load the page back into memory and the process had no idea
+- 100 MB system can act as if it has access to the full 4 GB on a 32 bit architecture
+
+Benefit of paging
+- Each process can access the same virtual memory addresses, never writing over each other
+- Security is an added benefit as we can map out physical memory that we don't want processes to see
+- Can be used to prevent overwriting of sensitive data such as program code
+- Many more benefits exist
 
 ## Reference:
 - [Intel Protected Architecture](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)

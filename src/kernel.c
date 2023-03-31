@@ -57,7 +57,7 @@ size_t strlen(const c8* str)
     return len-1;
 }
 
-void print(const c8 *str)
+void print(const c8 *str, ...)
 {
     size_t len = strlen(str);
     for(i32 i = 0; i < len; i++)

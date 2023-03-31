@@ -7,7 +7,7 @@
 #define VGA_HEIGHT 20
 
 /* TODO: do all printf function in print */
-void print(const c8 *str);
+void print(const c8 *str, ...);
 
 /* TODO: debug log */
 typedef enum
