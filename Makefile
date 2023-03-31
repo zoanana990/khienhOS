@@ -45,13 +45,7 @@ ASM_SOURCES   = $(wildcard $(SRC)/*.asm)        \
 				$(wildcard $(BOOT_SRC)/*.asm)   \
 				$(wildcard $(IDT_SRC)/*.asm)    \
 				$(wildcard $(MEMORY_SRC)/*.asm) \
-# list of objects
-OBJECTS = $(addprefix $(BUILD)/,$(notdir $(C_SOURCES:.c=.o)))
-vpath %.c $(sort $(dir $(C_SOURCES)))
 
-# list of ASM program objects
-OBJECTS += $(addprefix $(BUILD)/,$(notdir $(ASM_SOURCES:.s=.o)))
-vpath %.s $(sort $(dir $(ASM_SOURCES)))
 
 #############################################
 # COMPILE TOOLS AND FLAGS
@@ -73,6 +67,10 @@ LDFLAGS = -g -relocatable
 #############################################
 # BUILD
 #############################################
+# list of objects
+OBJECTS = $(addprefix $(BUILD)/,$(notdir $(C_SOURCES:.c=.o)))
+vpath %.c $(sort $(dir $(C_SOURCES)))
+
 all: clean $(BOOT) $(KERNEL)
 	# read the file instead to use stdin
 	# then we output to the os.bin
