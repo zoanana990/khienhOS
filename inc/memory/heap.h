@@ -24,4 +24,6 @@ typedef struct heap
     void          *saddr; /* start address of the heap data pool */
 } heap_t;
 
+i32 heap_create(heap_t *heap, void *ptr, void *end, heap_table_t *table);
+
 #endif // KHIENHOS_HEAP_H

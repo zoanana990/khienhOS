@@ -81,6 +81,7 @@ There are some notes in [Note](./note) folders, you can check the file and getti
 compile the code by yourself
 ```shell
 sudo chmod u+x ./build.sh
+./build.sh
 ```
 
 ## Some Resources

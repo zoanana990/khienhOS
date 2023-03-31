@@ -8,4 +8,9 @@
 /* OS config */
 #define KHIENHOS_TOTAL_INTERRUPTS 512
 
+/* Max memory allocation */
+#define KHIENHOS_HEAP_MAX_SIZE   0x10000000
+#define KHIENHOS_HEAP_BLOCK_SIZE 0x1000
+#define KHIENHOS_HEAP_START_ADDR
+
 #endif
