@@ -258,6 +258,21 @@ cons
 - wasted space
 -----------------------------------
 ## Paging
+### Introduction
+- Paging allows us to remap memory address to point to other memory addresses
+- Can be used to provide the illusion we have the maximum amount of RAM installed
+- Can be used to hide memory from other processes
+
+### Remapping memory
+- Paging allows us to remap one memory to another, so 0x100000 could point to 0x200000
+- Paging works in 4096 byte block sizes by default. The blocks are called pages
+- When paging is enabled the MMU (Memory Management Unit) will look at your paged table to resolve virtual addresses
+- Paging allows us to pretend memory exist when does not
+
+### virtual address vs physical address
+- Virtual address are addresses that are not pointing to the address in memory that their value says they are
+  E.g. virtual memory address 0x100000 might point to physical address 0x200000 as an example
+- Physical addresses
 
 ## Reference:
 - [Intel Protected Architecture](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)
