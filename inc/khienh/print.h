@@ -3,6 +3,9 @@
 
 #include <khienh/type.h>
 
+#define VGA_WIDTH 80
+#define VGA_HEIGHT 20
+
 /* TODO: do all printf function in print */
 void print(const c8 *str);
 

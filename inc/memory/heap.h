@@ -25,7 +25,7 @@ typedef struct heap
 } heap_t;
 
 kerr_no_t heap_create(heap_t *heap, void *ptr, void *end, heap_table_t *table);
-void *heap_malloc(size_t size);
+void *heap_malloc(heap_t *heap, size_t size);
 void heap_free(void *ptr);
 
 #endif // KHIENHOS_HEAP_H

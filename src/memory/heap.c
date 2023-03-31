@@ -67,13 +67,21 @@ out:
 }
 
 
+void *heap_malloc_block(heap_t *heap, u32 total_blocks)
+{
+    return 0;
+}
 
-void *heap_malloc(size_t size)
+void *heap_malloc(heap_t *heap, size_t size)
 {
     size_t aligned_size = heap_alloc_value_align(size);
     u32 total_blocks = aligned_size / KHIENHOS_HEAP_BLOCK_SIZE;
+    return heap_malloc_block(heap, total_blocks);
+}
 
-    return 0;
+void heap_free_block(heap_t heap, u32 starting_block)
+{
+
 }
 
 void heap_free(void *ptr)
