@@ -53,7 +53,55 @@ bool_t paging_is_aligned(void *address)
     return ((u32) address % PAGING_SIZE) == 0;
 }
 
+/** paging_get_indexes
+ * \return minus    -> error
+ *         positive -> address
+ * */
 s32 paging_get_indexes(void *virtual_address, u32 *directory_index_out, u32* table_index_out)
 {
-    if(!)
+    kerr_no_t ret = kerr_OK;
+
+    if(!paging_is_aligned((virtual_address)))
+    {
+        ret = -kerr_INVARG;
+        goto out;
+    }
+
+    /* check the directory and table index */
+    *directory_index_out = ((u32)virtual_address / (PAGING_TOTAL_ENTRIES_PER_TABLE * PAGING_SIZE));
+    *table_index_out = ((u32)virtual_address % (PAGING_TOTAL_ENTRIES_PER_TABLE * PAGING_SIZE) / PAGING_SIZE);
+
+    out:
+    return ret;
+}
+
+s32 paging_set(u32 *directory, void *virtual_address, u32 value)
+{
+    kerr_no_t ret = kerr_OK;
+
+    if (!paging_is_aligned(virtual_address))
+    {
+        ret = -kerr_INVARG;
+        goto out;
+    }
+
+    u32 directory_index = 0, table_index = 0;
+
+    ret = paging_get_indexes(virtual_address, &directory_index, &table_index);
+    if(ret < 0)
+    {
+        goto out;
+    }
+
+    u32  entry = directory[directory_index];
+
+    /**
+     * remember that the register 12-31 bit is address
+     * */
+    u32 *table = (u32 *) (entry & 0xfffff000);
+
+    table[table_index] = value;
+
+    out:
+    return ret;
 }

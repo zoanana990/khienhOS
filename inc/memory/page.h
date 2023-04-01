@@ -26,6 +26,12 @@
 #define PAGING_TOTAL_ENTRIES_PER_TABLE  1024
 #define PAGING_SIZE                     4096
 
+/*** page structure
+ * each page directory entry -> page table (1024) -> physical table (4096)
+ *
+ * There are 1024 page directory entry, so the total memory is 4 GB
+ * */
+
 typedef struct paging_4gb_chunk
 {
     u32 *directory_entry;
