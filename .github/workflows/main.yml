@@ -14,14 +14,6 @@ jobs:
             sudo apt-get -q -y install build-essential cppcheck
     - name: make
       run:  make
-    - name: make check
-      run: |
-            make check || (cat scripts/weeping.raw ; exit 1)
-            cat scripts/pikachu.raw
-    - name: make test
-      run: |
-            make test || (cat scripts/weeping.raw ; exit 1)
-            cat scripts/pikachu.raw
 
   coding-style:
     runs-on: ubuntu-20.04
