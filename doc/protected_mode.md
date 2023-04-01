@@ -1,5 +1,4 @@
 # Protected Mode
-
 ## How to enter the protected mode
 Three steps here:
 1. Disable interrupts, including [NMI](https://wiki.osdev.org/Non_Maskable_Interrupt) (as suggested by Intel Developers Manual).
@@ -318,6 +317,22 @@ Benefit of paging
 
 When implementing the function, we need to see [3] to know the control register
 
+## Read from the hard disk
+### What is PCI IDE controller
+- IDE refers to the electrical specification of cables which connect ATA drives to another device
+- IDE allows up to 4 drives to be connected
+  - ATA (Serial): Used for modern hard drives
+  - ATA (Parallel): Used for hard drives
+  - ATAPI (Serial): Used for modern optical drives
+  - ATAPI (Parallel): Commonly used for optical drives
+- Kernel programmer do not have to care if the drive is serial or parallel
+
+There are some possible drive types
+- Primary master drive
+- Primary slave drive
+- Secondary master drive
+- Secondary slave drive
+
 -------------------------
 ## Read from the hard disk
 -------------------------
@@ -325,9 +340,11 @@ When implementing the function, we need to see [3] to know the control register
 - A file system is a structure that describes how information is laid on a disk
 - Disks are not aware of files
 - The operating system knows the file system structure so knows how to read from the disk
+- Check the [ATA in osdev]()
 ### Virtual file system
 -------------------------
 ## Reference:
 1. [Intel Protected Architecture](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)
 2. [osdev paging](https://wiki.osdev.org/Paging)
 3. [control register in x86](https://en.wikipedia.org/wiki/Control_register)
+4. [aos](https://ceunican.github.io/aos/)

@@ -4,7 +4,7 @@
 #include <memory/kheap.h>
 #include <memory/page.h>
 #include <idt/idt.h>
-#include <io/io.h>
+#include <disk/disk.h>
 
 static u16 *video_mem;
 static u16 console_row = 0;

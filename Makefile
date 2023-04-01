@@ -19,6 +19,7 @@ IO_SRC        = $(SRC)/io
 IDT_BUILD     = $(BUILD)/idt
 MEMORY_BUILD  = $(BUILD)/memory
 IO_BUILD      = $(BUILD)/io
+DISK_BUILD    = $(BUILD)/disk
 
 # files
 KERNEL        = $(BIN)/kernel.bin
@@ -35,7 +36,8 @@ KERNEL_FILES  = $(BUILD)/kernel.asm.o    	\
                 $(MEMORY_BUILD)/heap.o   	\
                 $(MEMORY_BUILD)/kheap.o  	\
                 $(MEMORY_BUILD)/page.o	 	\
-                $(MEMORY_BUILD)/page.asm.o
+                $(MEMORY_BUILD)/page.asm.o	\
+                $(DISK_BUILD)/disk.o
 
 # refer to the arm_hal project
 # TODO: refine the makefile with makefile functions
@@ -72,7 +74,7 @@ LDFLAGS = -g -relocatable
 OBJECTS = $(addprefix $(BUILD)/,$(notdir $(C_SOURCES:.c=.o)))
 vpath %.c $(sort $(dir $(C_SOURCES)))
 
-all: clean $(BOOT) $(KERNEL)
+all: clean mkd $(BOOT) $(KERNEL)
 	# read the file instead to use stdin
 	# then we output to the os.bin
 	dd if=$(BOOT) >> $(BIN)/os.bin
@@ -81,28 +83,31 @@ all: clean $(BOOT) $(KERNEL)
 	# due to the padding issue, we need to padding zero to 512 bytes
 	dd if=/dev/zero bs=512 count=100 >> $(BIN)/os.bin
 
-$(KERNEL): $(KERNEL_FILES)
+mkd:
 	$(shell if [ ! -e $(BIN) ];then mkdir -p $(BIN); fi)
+	$(shell if [ ! -e $(BUILD) ];then mkdir -p $(BUILD); fi)
+	$(shell if [ ! -e $(IDT_BUILD) ];then mkdir -p $(IDT_BUILD); fi)
+	$(shell if [ ! -e $(IO_BUILD) ];then mkdir -p $(IO_BUILD); fi)
+	$(shell if [ ! -e $(MEMORY_BUILD) ];then mkdir -p $(MEMORY_BUILD); fi)
+	$(shell if [ ! -e $(DISK_BUILD) ];then mkdir -p $(DISK_BUILD); fi)
+
+$(KERNEL): $(KERNEL_FILES)
 	$(LD) $(LDFLAGS) $^ -o $(BUILD)/kernelfull.o
 	$(CC) -T $(LINKER) $(CFLAGS) $(BUILD)/kernelfull.o -o $@
 
 $(BOOT): $(BOOT_SRC)/boot.asm
-	$(shell if [ ! -e $(BUILD) ];then mkdir -p $(BUILD); fi)
 	nasm -f bin $(BOOT_SRC)/boot.asm -o $(BOOT)
 
 $(BUILD)/kernel.asm.o: $(SRC)/kernel.asm
 	nasm -f elf -g $^ -o $@
 
 $(IDT_BUILD)/idt.asm.o: $(IDT_SRC)/idt.asm
-	$(shell if [ ! -e $(IDT_BUILD) ];then mkdir -p $(IDT_BUILD); fi)
 	nasm -f elf -g $^ -o $@
 
 $(IO_BUILD)/io.asm.o: $(IO_SRC)/io.asm
-	$(shell if [ ! -e $(IO_BUILD) ];then mkdir -p $(IO_BUILD); fi)
 	nasm -f elf -g $^ -o $@
 
 $(MEMORY_BUILD)/page.asm.o: $(MEMORY_SRC)/page.asm
-	$(shell if [ ! -e $(MEMORY_SRC) ];then mkdir -p $(MEMORY_SRC); fi)
 	nasm -f elf -g $^ -o $@
 
 $(BUILD)/%.o: %.c Makefile | $(BUILD)
@@ -114,6 +119,8 @@ clean:
 	rm -rf $(BUILD)/*.o
 	rm -rf $(BUILD)/idt/*.o
 	rm -rf $(BUILD)/memory/*.o
+	rm -rf $(BUILD)/io/*.o
+	rm -rf $(BUILD)/disk/*.o
 
 #############################################
 # OTHER TOOLS
