@@ -47,3 +47,13 @@ u32 *paging_4gb_chunk_get_directory(paging_4gb_chunk_t *chunk)
 {
     return chunk->directory_entry;
 }
+
+bool_t paging_is_aligned(void *address)
+{
+    return ((u32) address % PAGING_SIZE) == 0;
+}
+
+s32 paging_get_indexes(void *virtual_address, u32 *directory_index_out, u32* table_index_out)
+{
+    if(!)
+}
