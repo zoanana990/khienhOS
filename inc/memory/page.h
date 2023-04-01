@@ -41,5 +41,7 @@ paging_4gb_chunk_t* paging_new_4gb(u8 flags);
 void paging_switch(u32* directory);
 void enable_paging();
 u32* paging_4gb_chunk_get_directory(paging_4gb_chunk_t* chunk);
+s32 paging_set(u32 *directory, void *virtual_address, u32 value);
+bool_t paging_is_aligned(void *address);
 
 #endif //KHIENHOS_PAGE_H

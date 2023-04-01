@@ -99,7 +99,6 @@ s32 paging_set(u32 *directory, void *virtual_address, u32 value)
      * remember that the register 12-31 bit is address
      * */
     u32 *table = (u32 *) (entry & 0xfffff000);
-
     table[table_index] = value;
 
     out:
