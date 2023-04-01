@@ -3,6 +3,6 @@
 
 #include <khienh/type.h>
 
-void* memset(void *ptr, i32 c, size_t size);
+void* memset(void *ptr, s32 c, size_t size);
 
 #endif

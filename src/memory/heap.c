@@ -75,7 +75,7 @@ static int heap_get_entry_type(heap_block_entry_t entry)
  * return
  * <0 : error occur
  * */
-i32 heap_get_start_block(heap_t *heap, u32 total_blocks)
+s32 heap_get_start_block(heap_t *heap, u32 total_blocks)
 {
     heap_table_t *table = heap->table;
 
@@ -114,9 +114,9 @@ void *heap_block_to_address(heap_t *heap, u32 block)
     return heap->saddr + (block * KHIENHOS_HEAP_BLOCK_SIZE);
 }
 
-void heap_mask_blocks_taken(heap_t *heap, i32 start_block, i32 total_blocks)
+void heap_mask_blocks_taken(heap_t *heap, s32 start_block, s32 total_blocks)
 {
-    i32 end_block = start_block + total_blocks - 1;
+    s32 end_block = start_block + total_blocks - 1;
 
     heap_block_entry_t entry = HEAP_BLOCK_TABLE_ENTRY_TAKEN | HEAP_BLOCK_IS_FIRST;
     if(total_blocks > 1)
@@ -124,7 +124,7 @@ void heap_mask_blocks_taken(heap_t *heap, i32 start_block, i32 total_blocks)
         entry |= HEAP_BLOCK_HAS_NEXT;
     }
 
-    for(i32 i = 0; i <= end_block; i++)
+    for(s32 i = 0; i <= end_block; i++)
     {
         heap->table->entry[i] = entry;
         entry = HEAP_BLOCK_TABLE_ENTRY_TAKEN;
@@ -138,9 +138,9 @@ void heap_mask_blocks_taken(heap_t *heap, i32 start_block, i32 total_blocks)
 /* malloc the block here and return a pointer in the data pool */
 void *heap_malloc_block(heap_t *heap, u32 total_blocks)
 {
-    void *address = 0;
+    void *address = NULL;
 
-    i32 start_block = heap_get_start_block(heap, total_blocks);
+    s32 start_block = heap_get_start_block(heap, total_blocks);
 
     if(start_block < 0)
         goto out;
@@ -161,15 +161,15 @@ void *heap_malloc(heap_t *heap, size_t size)
     return heap_malloc_block(heap, total_blocks);
 }
 
-i32 heap_address_to_block(heap_t *heap, void *address)
+s32 heap_address_to_block(heap_t *heap, void *address)
 {
-    return ((i32) (address - heap->saddr)) / KHIENHOS_HEAP_BLOCK_SIZE;
+    return ((s32) (address - heap->saddr)) / KHIENHOS_HEAP_BLOCK_SIZE;
 }
 
 void heap_free_block(heap_t *heap, u32 starting_block)
 {
     heap_table_t *table = heap->table;
-    for(i32 i = starting_block; i < (int)table->total; i++)
+    for(s32 i = starting_block; i < (int)table->total; i++)
     {
         heap_block_entry_t entry = table->entry[i];
         table->entry[i] = HEAP_BLOCK_TABLE_ENTRY_FREE;

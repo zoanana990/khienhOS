@@ -27,7 +27,7 @@ void idt_zero(struct idtr_desc *ptr)
     print("divide by zero error \n");
 }
 
-void idt_set(i32 interrupt_no, void* address)
+void idt_set(s32 interrupt_no, void* address)
 {
     struct idt_desc* desc = &idt_descriptors[interrupt_no];
     desc->offset_1 = (u32) address & 0xffff;
@@ -48,7 +48,7 @@ void idt_init()
     idtr_descriptor.base = (u32) idt_descriptors;
 
     /* clear all interrupt handler */
-    for(i32 i = 0; i < KHIENHOS_TOTAL_INTERRUPTS; i++)
+    for(s32 i = 0; i < KHIENHOS_TOTAL_INTERRUPTS; i++)
     {
         idt_set(i, no_interrupt);
     }

@@ -25,27 +25,28 @@ KERNEL        = $(BIN)/kernel.bin
 BOOT          = $(BIN)/boot.bin
 OS            = $(BIN)/os.bin
 LINKER        = $(SRC)/linker.ld
-KERNEL_FILES  = $(BUILD)/kernel.asm.o    \
-                $(BUILD)/kernel.o        \
-                $(IDT_BUILD)/idt.asm.o   \
-                $(IDT_BUILD)/idt.o       \
-				$(IO_BUILD)/io.asm.o     \
-                $(MEMORY_BUILD)/memory.o \
-                $(MEMORY_BUILD)/heap.o   \
-                $(MEMORY_BUILD)/kheap.o  \
-                $(MEMORY_BUILD)/page.o
+KERNEL_FILES  = $(BUILD)/kernel.asm.o    	\
+                $(BUILD)/kernel.o        	\
+                $(BUILD)/print.o         	\
+                $(IDT_BUILD)/idt.asm.o   	\
+                $(IDT_BUILD)/idt.o       	\
+				$(IO_BUILD)/io.asm.o     	\
+                $(MEMORY_BUILD)/memory.o 	\
+                $(MEMORY_BUILD)/heap.o   	\
+                $(MEMORY_BUILD)/kheap.o  	\
+                $(MEMORY_BUILD)/page.o	 	\
+                $(MEMORY_BUILD)/page.asm.o
 
 # refer to the arm_hal project
 # TODO: refine the makefile with makefile functions
 C_SOURCES     = $(wildcard $(SRC)/*.c)          \
                 $(wildcard $(BOOT_SRC)/*.c)     \
 				$(wildcard $(IDT_SRC)/*.c)      \
-				$(wildcard $(MEMORY_SRC)/*.c)   \
+				$(wildcard $(MEMORY_SRC)/*.c)
 ASM_SOURCES   = $(wildcard $(SRC)/*.asm)        \
 				$(wildcard $(BOOT_SRC)/*.asm)   \
 				$(wildcard $(IDT_SRC)/*.asm)    \
-				$(wildcard $(MEMORY_SRC)/*.asm) \
-
+				$(wildcard $(MEMORY_SRC)/*.asm)
 
 #############################################
 # COMPILE TOOLS AND FLAGS
@@ -98,6 +99,10 @@ $(IDT_BUILD)/idt.asm.o: $(IDT_SRC)/idt.asm
 
 $(IO_BUILD)/io.asm.o: $(IO_SRC)/io.asm
 	$(shell if [ ! -e $(IO_BUILD) ];then mkdir -p $(IO_BUILD); fi)
+	nasm -f elf -g $^ -o $@
+
+$(MEMORY_BUILD)/page.asm.o: $(MEMORY_SRC)/page.asm
+	$(shell if [ ! -e $(MEMORY_SRC) ];then mkdir -p $(MEMORY_SRC); fi)
 	nasm -f elf -g $^ -o $@
 
 $(BUILD)/%.o: %.c Makefile | $(BUILD)

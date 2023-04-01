@@ -283,7 +283,7 @@ Structure overview:
 - 1024 pages table entries per page table
 - each page table entry covers 4096 bytes of memory
 - each "4096" byte block of memory is called a page
-- 1024*1024*4096 = 4GB of addressable memory
+- 1024 * 1024 * 4096 = 4GB of addressable memory
 - Thus, the page directory structure
   - Holds a pointer to a page table
   - Holds attributes
@@ -316,5 +316,18 @@ Benefit of paging
 - Can be used to prevent overwriting of sensitive data such as program code
 - Many more benefits exist
 
+When implementing the function, we need to see [3] to know the control register
+
+-------------------------
+## Read from the hard disk
+-------------------------
+## File system
+- A file system is a structure that describes how information is laid on a disk
+- Disks are not aware of files
+- The operating system knows the file system structure so knows how to read from the disk
+### Virtual file system
+-------------------------
 ## Reference:
-- [Intel Protected Architecture](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)
+1. [Intel Protected Architecture](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)
+2. [osdev paging](https://wiki.osdev.org/Paging)
+3. [control register in x86](https://en.wikipedia.org/wiki/Control_register)

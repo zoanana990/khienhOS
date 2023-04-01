@@ -24,6 +24,17 @@ void *kmalloc(size_t size)
     return heap_malloc(&kernel_heap, size);
 }
 
+/* allocate memory and initialize the region to zero */
+void *kzalloc(size_t size)
+{
+    void *ptr = kmalloc(size);
+
+    if(!ptr) return NULL;
+
+    memset(ptr, 0x00, size);
+    return ptr;
+}
+
 void kfree(void *ptr)
 {
     heap_free(&kernel_heap, ptr);
