@@ -87,7 +87,7 @@ void kernel_main()
     kheap_init();
 
     /* Setup paging */
-    kernel_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    kernel_chunk = paging_new_4gb(PAGING_WRITE_PRESENT_ACCESS);
 
     /* switch to kernel paging chunk */
     paging_switch(paging_4gb_chunk_get_directory(kernel_chunk));
