@@ -51,13 +51,6 @@ void console_init()
     }
 }
 
-size_t strlen(const s8* str)
-{
-    size_t len = 0;
-    while(str[len++]);
-    return len-1;
-}
-
 void print(const s8 *str, ...)
 {
     va_list va;

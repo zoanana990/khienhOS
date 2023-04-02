@@ -15,11 +15,15 @@ BOOT_SRC      = $(SRC)/boot
 IDT_SRC       = $(SRC)/idt
 MEMORY_SRC    = $(SRC)/memory
 IO_SRC        = $(SRC)/io
+FS_SRC        = $(SRC)/fs
+COMMON_SRC    = $(SRC)/common
 
 IDT_BUILD     = $(BUILD)/idt
 MEMORY_BUILD  = $(BUILD)/memory
 IO_BUILD      = $(BUILD)/io
 DISK_BUILD    = $(BUILD)/disk
+FS_BUILD      = $(BUILD)/fs
+COMMON_BUILD  = $(BUILD)/common
 
 # files
 KERNEL        = $(BIN)/kernel.bin
@@ -37,14 +41,18 @@ KERNEL_FILES  = $(BUILD)/kernel.asm.o    	\
                 $(MEMORY_BUILD)/kheap.o  	\
                 $(MEMORY_BUILD)/page.o	 	\
                 $(MEMORY_BUILD)/page.asm.o	\
-                $(DISK_BUILD)/disk.o
+                $(FS_BUILD)/parser.o        \
+                $(COMMON_BUILD)/string.o
 
 # refer to the arm_hal project
 # TODO: refine the makefile with makefile functions
 C_SOURCES     = $(wildcard $(SRC)/*.c)          \
                 $(wildcard $(BOOT_SRC)/*.c)     \
 				$(wildcard $(IDT_SRC)/*.c)      \
-				$(wildcard $(MEMORY_SRC)/*.c)
+				$(wildcard $(MEMORY_SRC)/*.c)   \
+				$(wildcard $(FS_SRC)/*.c)       \
+				$(wildcard $(COMMON_SRC)/*.c)   \
+
 ASM_SOURCES   = $(wildcard $(SRC)/*.asm)        \
 				$(wildcard $(BOOT_SRC)/*.asm)   \
 				$(wildcard $(IDT_SRC)/*.asm)    \
@@ -90,6 +98,8 @@ mkd:
 	$(shell if [ ! -e $(IO_BUILD) ];then mkdir -p $(IO_BUILD); fi)
 	$(shell if [ ! -e $(MEMORY_BUILD) ];then mkdir -p $(MEMORY_BUILD); fi)
 	$(shell if [ ! -e $(DISK_BUILD) ];then mkdir -p $(DISK_BUILD); fi)
+	$(shell if [ ! -e $(FS_BUILD) ];then mkdir -p $(FS_BUILD); fi)
+	$(shell if [ ! -e $(COMMON_BUILD) ];then mkdir -p $(COMMON_BUILD); fi)
 
 $(KERNEL): $(KERNEL_FILES)
 	$(LD) $(LDFLAGS) $^ -o $(BUILD)/kernelfull.o

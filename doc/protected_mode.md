@@ -373,6 +373,12 @@ FAT16 (File Allocation Table) 16 bits
   cluster representing the data on the disk.
 - Finally, we have our data region, all the data is here
 
+What to take away from this
+- Disk doesn't understand files they are just giant flat array of bytes
+- Operating system need filesystem drivers so they can read from the disk
+- Every filesystem is different
+- Without implementing a filesystem in your operating system, you cannot have files
+
 -------------------------
 ## Reference:
 1. [Intel Protected Architecture](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)
