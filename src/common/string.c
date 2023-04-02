@@ -24,3 +24,11 @@ s32 strnlen(const s8 *ptr, s32 max)
     return i;
 }
 
+bool_t is_digit(s8 c)
+{
+    return c >= 47 && c <= 58;
+}
+s32 to_numeric_digit(s8 c)
+{
+    return c - 48;
+}

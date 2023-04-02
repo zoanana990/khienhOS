@@ -4,6 +4,8 @@
 #include <memory/kheap.h>
 #include <memory/page.h>
 #include <idt/idt.h>
+#include <string/string.h>
+#include <fs/parser.h>
 #include <disk/disk.h>
 
 static u16 *video_mem;
@@ -90,4 +92,6 @@ void kernel_main()
 
     /* enable interrupt */
     enable_interrupt();
+
+
 }
