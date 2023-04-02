@@ -274,10 +274,13 @@ cons
 - Physical addresses are absolute addresses in memory whose value points to the same address in memory. 
   E.g. physical memory address 0x100000 is actual address
 - virtual address and physical address is the method to access the memory
+
 ![img.png](image/vm_mapping.png)
 
 Structure overview:
+
 ![img.png](image/vm_directory_table.png)
+
 - 1024 pages directories point to 1024 pages tables
 - 1024 pages table entries per page table
 - each page table entry covers 4096 bytes of memory
@@ -288,6 +291,7 @@ Structure overview:
   - Holds attributes
 
 ### Page directory structure
+
 ![img.png](image/Page_Directory_Structure.png)
 
 Page fault exception:
@@ -334,14 +338,41 @@ There are some possible drive types
 - Secondary slave drive
 
 -------------------------
-## Read from the hard disk
--------------------------
 ## File system
 - A file system is a structure that describes how information is laid on a disk
 - Disks are not aware of files
 - The operating system knows the file system structure so knows how to read from the disk
 - Check the [ATA in osdev]()
-### Virtual file system
+
+Disks
+- Hard disks can be thought of as just a giant array of information split into sectors
+- Each sector can be read into memory and is given a LBA (Logical Block Address) number
+- Files do not exist on the disk
+- Disks have no concept of files, for disk, that is only a binary data
+
+Filesystem structure
+- Contains raw data for files (remember the disk isn't aware of this)
+- Contains the filesystem structure header which can explain things such as how many files are on the disk
+  where the root directory is located etc.
+- The way files are laid out on disk is different depending on the filesystem you are using for example
+  "FAT16", "FAT32", "NTFS" and more ...
+- Without filesystem, we would be forced to read and write data through the use of sector numbers structure would not
+  exist and corruption would be possible
+
+FAT16 (File Allocation Table) 16 bits
+- The first sector in this filesystem format is the boot sector on the disk. Fields also exist in this first sector that
+  describe the filesystem such as how many reserved sectors follow this sector
+- Then follows the reserved sectors there are sectors ignored by the filesystem. There is a field in the boot sector that
+  specified how many reserved sectors there are. (Remember the operating system must ignore these, it's not automatic!
+  The disk has no idea)
+- Now we have our first file allocation table, this table contains values that represent which clusters on the disk are 
+  taken and which are free (A cluster is just a certain number of sectors joined together to represent one cluster)
+- Next comes our second file allocation table it's optional though and depends on the FAT16 header in the boot sector
+- Now comes our root directory, this explains what files/directories are in the root directory of the filesystem, Each entry
+  has a relative name that represent the file or directory name, attribute such as read only, the address of the first 
+  cluster representing the data on the disk.
+- Finally, we have our data region, all the data is here
+
 -------------------------
 ## Reference:
 1. [Intel Protected Architecture](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)
