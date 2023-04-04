@@ -1,0 +1,4 @@
+#ifndef KHIENHOS_STREAM_H
+#define KHIENHOS_STREAM_H
+
+#endif //KHIENHOS_STREAM_H
