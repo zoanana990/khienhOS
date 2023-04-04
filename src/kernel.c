@@ -4,9 +4,10 @@
 #include <memory/kheap.h>
 #include <memory/page.h>
 #include <idt/idt.h>
-#include <string/string.h>
+#include <common/string.h>
 #include <fs/parser.h>
 #include <disk/disk.h>
+#include <disk/stream.h>
 
 static u16 *video_mem;
 static u16 console_row = 0;
@@ -93,5 +94,9 @@ void kernel_main()
     /* enable interrupt */
     enable_interrupt();
 
-
+    ds_t* stream = disk_streamer_new(0);
+    disk_streamer_seek(stream, 0x201);
+    unsigned char c = 0;
+    disk_streamer_read(stream, &c, 1);
+    while(1) {}
 }

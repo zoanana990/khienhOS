@@ -17,6 +17,7 @@ MEMORY_SRC    = $(SRC)/memory
 IO_SRC        = $(SRC)/io
 FS_SRC        = $(SRC)/fs
 COMMON_SRC    = $(SRC)/common
+DISK_SRC      = $(SRC)/disk
 
 IDT_BUILD     = $(BUILD)/idt
 MEMORY_BUILD  = $(BUILD)/memory
@@ -24,39 +25,42 @@ IO_BUILD      = $(BUILD)/io
 DISK_BUILD    = $(BUILD)/disk
 FS_BUILD      = $(BUILD)/fs
 COMMON_BUILD  = $(BUILD)/common
+DISK_BUILD    = $(BUILD)/disk
 
 # files
 KERNEL        = $(BIN)/kernel.bin
 BOOT          = $(BIN)/boot.bin
 OS            = $(BIN)/os.bin
 LINKER        = $(SRC)/linker.ld
-KERNEL_FILES  = $(BUILD)/kernel.asm.o    	\
-                $(BUILD)/kernel.o        	\
-                $(BUILD)/print.o         	\
-                $(IDT_BUILD)/idt.asm.o   	\
-                $(IDT_BUILD)/idt.o       	\
-				$(IO_BUILD)/io.asm.o     	\
-                $(MEMORY_BUILD)/memory.o 	\
-                $(MEMORY_BUILD)/heap.o   	\
-                $(MEMORY_BUILD)/kheap.o  	\
-                $(MEMORY_BUILD)/page.o	 	\
-                $(MEMORY_BUILD)/page.asm.o	\
+KERNEL_FILES  = $(BUILD)/kernel.asm.o       \
+                $(BUILD)/kernel.o           \
+                $(BUILD)/print.o            \
+                $(IDT_BUILD)/idt.asm.o      \
+                $(IDT_BUILD)/idt.o          \
+                $(IO_BUILD)/io.asm.o        \
+                $(MEMORY_BUILD)/memory.o    \
+                $(MEMORY_BUILD)/heap.o      \
+                $(MEMORY_BUILD)/kheap.o     \
+                $(MEMORY_BUILD)/page.o      \
+                $(MEMORY_BUILD)/page.asm.o  \
                 $(FS_BUILD)/parser.o        \
-                $(COMMON_BUILD)/string.o
+                $(DISK_BUILD)/disk.o        \
+                $(DISK_BUILD)/stream.o      \
+                $(COMMON_BUILD)/string.o    \
 
 # refer to the arm_hal project
 # TODO: refine the makefile with makefile functions
 C_SOURCES     = $(wildcard $(SRC)/*.c)          \
                 $(wildcard $(BOOT_SRC)/*.c)     \
-				$(wildcard $(IDT_SRC)/*.c)      \
-				$(wildcard $(MEMORY_SRC)/*.c)   \
-				$(wildcard $(FS_SRC)/*.c)       \
-				$(wildcard $(COMMON_SRC)/*.c)   \
+                $(wildcard $(IDT_SRC)/*.c)      \
+                $(wildcard $(MEMORY_SRC)/*.c)   \
+                $(wildcard $(FS_SRC)/*.c)       \
+                $(wildcard $(COMMON_SRC)/*.c)   \
 
 ASM_SOURCES   = $(wildcard $(SRC)/*.asm)        \
-				$(wildcard $(BOOT_SRC)/*.asm)   \
-				$(wildcard $(IDT_SRC)/*.asm)    \
-				$(wildcard $(MEMORY_SRC)/*.asm)
+                $(wildcard $(BOOT_SRC)/*.asm)   \
+                $(wildcard $(IDT_SRC)/*.asm)    \
+                $(wildcard $(MEMORY_SRC)/*.asm)
 
 #############################################
 # COMPILE TOOLS AND FLAGS
@@ -131,6 +135,8 @@ clean:
 	rm -rf $(BUILD)/memory/*.o
 	rm -rf $(BUILD)/io/*.o
 	rm -rf $(BUILD)/disk/*.o
+	rm -rf $(BUILD)/common/*.o
+	rm -rf $(BUILD)/fs/*.o
 
 #############################################
 # OTHER TOOLS
