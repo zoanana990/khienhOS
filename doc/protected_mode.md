@@ -380,6 +380,28 @@ What to take away from this
 - Without implementing a filesystem in your operating system, you cannot have files
 
 -------------------------
+## File Allocation Table
+- The file allocation table (FAT) is a filesystem developed by microsoft
+- IT consists of a series of clusters that hold data and a table that determined data and a table that determines
+  the state of a cluster
+- The boot sector stores information about the filesystem
+### FAT16 filesystem
+- Use clusters to represent data and subdirectories
+- Each cluster uses a fixed amount of sectors which is specified in the boot sector
+- Every file in FAT16 needs to use at least one cluster for its data this means a lot of storage is wasted for small file
+- FAT16 cannot store files larger thn 2GB  without file support. With large file support is the maximum
+
+| Name           | Size                                                              |
+|----------------|-------------------------------------------------------------------|
+| Boot sector    | 512 bytes                                                         |
+| Reserved       | first_header.reserved_sectors * 512                               |
+| FAT1           | first_header.sector_per_fat * 512                                 |
+| FAT2 (opt)     | first_header.sector_per_fat * 512                                 |
+| Root directory | first_header.root_dir_entries * sizeof(struct fat_directory_item) |
+| Data cluster   | -                                                                 |
+
+
+-------------------------
 ## Reference:
 1. [Intel Protected Architecture](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)
 2. [osdev paging](https://wiki.osdev.org/Paging)
