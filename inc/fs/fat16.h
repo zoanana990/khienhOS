@@ -97,25 +97,26 @@ typedef struct fat_item
     fat_item_t type;
 } fat_item_structure_t;
 
-struct fat_item_descriptor
+typedef struct fat_item_descriptor
 {
     fat_item_structure_t * item;
     u32 pos;
-};
+} fat_item_descriptor_t;
 
-struct fat_private
+typedef struct fat_private
 {
     fat_h_t header;
     fat_directory_t root_directory;
 
     /* Used to stream data clusters */
     ds_t* cluster_read_stream;
+
     /* Used to stream the file allocation table */
     ds_t* fat_read_stream;
 
     /* Used in situations where we stream the directory */
     ds_t* directory_stream;
-};
+} fat_private_t;
 
 void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode);
 s32   fat16_resolve(disk_t *disk);
