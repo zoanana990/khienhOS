@@ -391,14 +391,110 @@ What to take away from this
 - Every file in FAT16 needs to use at least one cluster for its data this means a lot of storage is wasted for small file
 - FAT16 cannot store files larger thn 2GB  without file support. With large file support is the maximum
 
+FAT16 disk layout:
+
 | Name           | Size                                                              |
 |----------------|-------------------------------------------------------------------|
 | Boot sector    | 512 bytes                                                         |
 | Reserved       | first_header.reserved_sectors * 512                               |
 | FAT1           | first_header.sector_per_fat * 512                                 |
-| FAT2 (opt)     | first_header.sector_per_fat * 512                                 |
+| FAT2 (opt)     | first_header.sector_per_fat * 512 (not discussed)                 |
 | Root directory | first_header.root_dir_entries * sizeof(struct fat_directory_item) |
 | Data cluster   | -                                                                 |
+
+FAT16 file allocation table explained
+- Each entry in the table is 2 bytes long and represents a cluster in the data clusters region that is available or taken
+- Clusters can chain together, for example a file larger than one cluster will use two clusters. The value that represents
+  the first cluster in the file allocation table will contain the value of next cluster. The final cluster will contain a value of
+  0xffff signifying that there are no more cluster
+- The size of a cluster is represented in the boot sector
+
+FAT16 Root directory
+- filesystem have directories/folders. FAT16 is no different
+- FAT16 has what's known as a root directory, this is the top most directory in the system
+- Directories contain directory entries of a fixed size
+
+```c
+struct fat_directory_item
+{
+    u8  filename[8];
+    u8  ext[3];
+    u8  attribute;
+    u8  reserved;
+    u8  creation_time_tenthes_of_a_sec;
+    u16 creation_time;
+    u16 creation_data;
+    u16 last_access;
+    u16 high_16_bits_first_cluster;
+    u16 last_mod_time;
+    u16 last_mod_data;
+    u16 low_16_bits_first_cluster;
+    u32 filesize;
+} __attribute__ ((packed));
+```
+
+- Attribute field contains flags that determine item is a file, or a directory. If it's read only etc.
+- If the directory item represents a file, then the first cluster points to the start of the file data.
+  if it's representing a directory, then its first cluster will point to a cluster that has directory entry.
+
+Iterating through directories
+- In the boot sector contains the maximum number of a root directory entries, we should not exceed this
+  value when iterating through the root directory
+- We know when we have finished iterating through the root directory or a subdirectory because the first byte of 
+  the filename will be equal to zero
+- Attribute flags
+  - `0x01` Read only
+  - `0x02` File hidden
+  - `0x04` System file do not move the clusters
+  - `0x08` Volume label
+  - `0x10` This is not a regular file, it is a directory (if this bit is not set, then this directory represents a regular file)
+  - `0x20` archived
+  - `0x40` device
+  - `0x80` reserved
+- The filename is 8 bytes wide and unused bytes are padded with spaces (0x20)
+- The extension is 3 bytes wide and unused bytes are padded with spaces (0x20)
+
+Clusters
+- Each cluster represents a certain amount of sector linearly to each other
+- The amount of sectors that represents a cluster is stored in the boot sector
+- The data clusters section in the filesystem contains all the cluster that make up the subdirectories and
+  file data of files throughout the FAT filesystem
+
+Useful tips
+- Use `__attribute__((packed))` with all structures that are to be stored or read from disk. The C compiler
+  can do clever optimization on the structure and this is not we want when working with raw data from the disk
+  Thus, setting the attribute to ensure that never happen
+
+## Virtual filesystem layer
+- The virtual filesystem layer allows a kernel to support an infinite amount of filesystems
+- The virtual filesystem layer allows us to abstract out low level filesystem code
+- Allows filesystem functionality to be loaded or unloaded to the kernel at any time
+
+Unlimited Filesystems
+- Filesystem drivers can be loaded or unloaded on demand
+- The programming interface to the filesystems remains the same for all filesystems
+
+What happens when a disk gets inserted?
+- We poll each filesystem and ask if the disk holds a filesystem it can manage
+- We call this resolve filesystem
+- When a filesystem that can be used with the desk is found then the disk bind its self to its implementation
+
+```graphviz
+digraph{
+    rankdir = LR
+    head[color=red, fontcolor=red]
+    want_to_insert[color=purple, fontcolor=purple]
+    dophin[shape = square]
+    bear[shape = square]
+    gerbil[shape = square]
+    meerkat[shape = square]
+    head -> {dophin, meerkat}
+    want_to_insert -> bear
+    dophin -> {gerbil, head}
+    gerbil -> {meerkat, dophin}
+    meerkat -> {head, gerbil}
+}
+```
 
 
 -------------------------
