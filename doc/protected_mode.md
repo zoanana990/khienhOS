@@ -487,6 +487,14 @@ kernel <--> NTFS;
 kernel <--> FAT32;
 ```
 
+`fopen` communication
+``` mermaid
+flowchart LR;
+User_program <---> kernel;
+kernel <---> path_parser;
+path_parser <---> path_root;
+path_root <---> kernel;
+```
 
 -------------------------
 ## Reference:
