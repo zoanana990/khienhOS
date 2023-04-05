@@ -9,7 +9,7 @@ INCLUDES      = -Iinc
 # directory
 SRC           = ./src
 BUILD         = ./build
-BIN           = ./bin
+BIN           = $(BUILD)/bin
 
 BOOT_SRC      = $(SRC)/boot
 IDT_SRC       = $(SRC)/idt
@@ -93,7 +93,7 @@ all: clean mkd $(BOOT) $(KERNEL)
 	dd if=$(KERNEL) >> $(BIN)/os.bin
 
 	# due to the padding issue, we need to padding zero to 512 bytes
-	dd if=/dev/zero bs=1048576 count=16 >> ./bin/os.bin
+	dd if=/dev/zero bs=1048576 count=16 >> $(BIN)/os.bin
 #	sudo mount -t vfat ./bin/os.bin /mnt/d
 #	# Copy a file over
 #	sudo cp ./hello.txt /mnt/d
