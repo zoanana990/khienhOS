@@ -479,21 +479,12 @@ What happens when a disk gets inserted?
 - We call this resolve filesystem
 - When a filesystem that can be used with the desk is found then the disk bind its self to its implementation
 
-```graphviz
-digraph{
-    rankdir = LR
-    head[color=red, fontcolor=red]
-    want_to_insert[color=purple, fontcolor=purple]
-    dophin[shape = square]
-    bear[shape = square]
-    gerbil[shape = square]
-    meerkat[shape = square]
-    head -> {dophin, meerkat}
-    want_to_insert -> bear
-    dophin -> {gerbil, head}
-    gerbil -> {meerkat, dophin}
-    meerkat -> {head, gerbil}
-}
+``` mermaid
+flowchart TD;
+kernel <---> User_programs;
+kernel <--> FAT16;
+kernel <--> NTFS;
+kernel <--> FAT32;
 ```
 
 
