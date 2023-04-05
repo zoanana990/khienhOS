@@ -3,6 +3,7 @@
 
 #include <fs/file.h>
 #include <common/string.h>
+#include <disk/stream.h>
 
 #define KHIENHOS_FAT16_SIGNATURE        0x29
 #define KHIENHOS_FAT16_FAT_ENTRY_SIZE   0x02
@@ -53,7 +54,68 @@ typedef __attribute__((packed)) struct fat_header
     u32 sectors_big;
 } fat_header_t;
 
+typedef struct fat_h{
+    fat_header_t primary_header;
+    union fat_f_u{
+        fat_header_extended_t extended_header;
+    } shared;
+} fat_h_t;
 
+typedef __attribute__((packed)) struct fat_directory_item
+{
+    u8  filename[8];
+    u8  ext[3];
+    u8  attribute;
+    u8  reserved;
+    u8  creation_time_tenths_of_a_sec;
+    u16 creation_time;
+    u16 creation_date;
+    u16 last_access;
+    u16 high_16_bits_first_cluster;
+    u16 last_mod_time;
+    u16 last_mod_date;
+    u16 low_16_bits_first_cluster;
+    u32 filesize;
+} fat_directory_item_t;
+
+typedef struct fat_directory
+{
+    fat_directory_item_t *item;
+    s32 total;
+    s32 sector_pos;
+    s32 ending_sector_pos;
+} fat_directory_t;
+
+typedef struct fat_item
+{
+    union
+    {
+        struct fat_directory_item* item;
+        struct fat_directory* directory;
+    };
+
+    fat_item_t type;
+} fat_item_structure_t;
+
+struct fat_item_descriptor
+{
+    fat_item_structure_t * item;
+    u32 pos;
+};
+
+struct fat_private
+{
+    fat_h_t header;
+    fat_directory_t root_directory;
+
+    /* Used to stream data clusters */
+    ds_t* cluster_read_stream;
+    /* Used to stream the file allocation table */
+    ds_t* fat_read_stream;
+
+    /* Used in situations where we stream the directory */
+    ds_t* directory_stream;
+};
 
 void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode);
 s32   fat16_resolve(disk_t *disk);
