@@ -493,7 +493,12 @@ flowchart LR;
 User_program <---> kernel;
 kernel <---> path_parser;
 path_parser <---> path_root;
+subgraph fs
 path_root <---> kernel;
+paht_root <---> disk;
+disk <---> FAT16;
+FAT16 <---> fopen;
+end
 ```
 
 -------------------------
