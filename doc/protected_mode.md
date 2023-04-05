@@ -501,9 +501,15 @@ FAT16 <---> fopen;
 end
 ```
 
+Overview:
+- The virtual filesystem layers allows infinite amount of filesystems
+- All the filesystem functionality uses the same interface
+- The caller of file routines does not have to care about which filesystem to use
+
 -------------------------
 ## Reference:
 1. [Intel Protected Architecture](https://www.csie.ntu.edu.tw/~wcchen/asm98/asm/proj/b85506061/cover.html)
 2. [osdev paging](https://wiki.osdev.org/Paging)
 3. [control register in x86](https://en.wikipedia.org/wiki/Control_register)
 4. [aos](https://ceunican.github.io/aos/)
+5. [Design of the FAT filesystem](https://en.wikipedia.org/wiki/Design_of_the_FAT_file_system)
