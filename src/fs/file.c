@@ -2,7 +2,7 @@
 #include <memory/memory.h>
 #include <memory/kheap.h>
 #include <khienh/type.h>
-#include <disk/disk.h>
+#include <fs/fat16.h>
 
 fs_t *filesystems[KHIENHOS_MAX_FILESYSTEMS];
 fd_t *file_descriptors[KHIENHOS_MAX_FILE_DESCRIPTORS];
@@ -32,7 +32,7 @@ void fs_insert_filesystem(fs_t *filesystem)
 
 static void fs_static_load()
 {
-    // fs_insert_filesystem(fat16_init());
+    fs_insert_filesystem(fat16_init());
     return;
 }
 

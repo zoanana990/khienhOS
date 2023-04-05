@@ -5,8 +5,7 @@
 #include <memory/page.h>
 #include <idt/idt.h>
 #include <common/string.h>
-#include <fs/parser.h>
-#include <disk/disk.h>
+#include <fs/file.h>
 #include <disk/stream.h>
 
 static u16 *video_mem;
@@ -81,6 +80,9 @@ void kernel_main()
 
     /* initialize the heap */
     kheap_init();
+
+    /* initialize the file system */
+    fs_init();
 
     /* Setup paging */
     kernel_chunk = paging_new_4gb(PAGING_WRITE_PRESENT_ACCESS);

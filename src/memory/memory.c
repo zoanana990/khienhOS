@@ -10,6 +10,15 @@ void* memset(void *ptr, s32 c, size_t size)
     return ptr;
 }
 
+void *memcpy(void *dst, const void *src, size_t len)
+{
+    s8 *d = dst;
+    const s8 *s = src;
+    while(len--)
+        *d++ = *s++;
+    return dst;
+}
+
 s32 memcmp (const void *str1, const void *str2, size_t count)
 {
     register const u8 *s1 = (const u8 *)str1;

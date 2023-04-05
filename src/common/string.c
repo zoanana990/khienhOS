@@ -1,4 +1,5 @@
 #include <common/string.h>
+#include <memory/memory.h>
 
 s32 strlen(const s8 *ptr)
 {
@@ -31,4 +32,9 @@ bool_t is_digit(s8 c)
 s32 to_numeric_digit(s8 c)
 {
     return c - 48;
+}
+
+s8 *strcpy(s8 *dst, const s8 *src)
+{
+    return memcpy(dst, src, strlen(src) + 1);
 }
