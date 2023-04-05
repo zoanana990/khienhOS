@@ -43,8 +43,9 @@ KERNEL_FILES  = $(BUILD)/kernel.asm.o       \
                 $(MEMORY_BUILD)/kheap.o     \
                 $(MEMORY_BUILD)/page.o      \
                 $(MEMORY_BUILD)/page.asm.o  \
-                $(FS_BUILD)/parser.o        \
                 $(DISK_BUILD)/disk.o        \
+                $(FS_BUILD)/parser.o        \
+                $(FS_BUILD)/file.o          \
                 $(DISK_BUILD)/stream.o      \
                 $(COMMON_BUILD)/string.o    \
 

@@ -17,4 +17,8 @@
 /* disk config */
 #define KHIENHOS_DISK_SECTOR_SIZE   512
 
+/* file system */
+#define KHIENHOS_MAX_FILESYSTEMS      12
+#define KHIENHOS_MAX_FILE_DESCRIPTORS 512
+
 #endif

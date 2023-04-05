@@ -72,6 +72,7 @@ void disk_search_and_init()
     memset(&disk, 0, sizeof(disk_t));
     disk.type = KHIENHOS_DISK_TYPE_REAL;
     disk.sector_size = KHIENHOS_DISK_SECTOR_SIZE;
+    disk.filesystem = fs_resolve(&disk);
 }
 
 disk_t *disk_get(s32 index)

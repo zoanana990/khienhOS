@@ -33,6 +33,7 @@ typedef enum
     kerr_OPNSUP,    /* operation not support */
     kerr_INVARG,    /* invalid argument */
     kerr_BADPATH,   /* bad path */
+    kerr_NOMEM,     /* no memory */
 } kerr_no_t;
 
 /* This section is used to implement printf
