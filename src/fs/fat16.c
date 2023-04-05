@@ -1,5 +1,4 @@
 #include <fs/fat16.h>
-#include <common/string.h>
 
 fs_t fat16_fs =
 {
