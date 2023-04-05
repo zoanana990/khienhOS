@@ -17,6 +17,12 @@ typedef struct disk
     kdisk_t type;
     s32     sector_size;
     fs_t   *filesystem;
+
+    /* The id of the disk */
+    s32     id;
+
+    /* The private data of our filesystem */
+    void   *fs_private;
 } disk_t;
 
 disk_t *disk_get(s32 index);

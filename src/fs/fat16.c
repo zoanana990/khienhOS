@@ -1,4 +1,5 @@
 #include <fs/fat16.h>
+#include <memory/memory.h>
 
 fs_t fat16_fs =
 {
