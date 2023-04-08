@@ -34,7 +34,6 @@ OS            = $(BIN)/os.bin
 LINKER        = $(SRC)/linker.ld
 KERNEL_FILES  = $(BUILD)/kernel.asm.o       \
                 $(BUILD)/kernel.o           \
-                $(BUILD)/print.o            \
                 $(IDT_BUILD)/idt.asm.o      \
                 $(IDT_BUILD)/idt.o          \
                 $(IO_BUILD)/io.asm.o        \
