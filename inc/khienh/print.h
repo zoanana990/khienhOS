@@ -2,13 +2,12 @@
 #define KHIENHOS_PRINT_H
 
 #include <khienh/type.h>
+#include <khienh/font_color.h>
+#include <common/string.h>
 
 /*  definition of the screen */
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 20
-
-/* TODO : do all printf function in print */
-void print(const s8 *str, ...);
 
 /* TODO : debug log */
 typedef enum
@@ -19,11 +18,8 @@ typedef enum
     log_last
 } debug_level_t;
 
-#ifdef CUSTOM_PRINTF
-s32 printk(const s8* format, ...);
-s32 sprintk(s8 *buffer, const s8* format, ...);
-
-
-#endif
+/* TODO : do all printf function in print */
+void print(const s8 *str, ...);
+void console_init();
 
 #endif //KHIENHOS_PRINT_H

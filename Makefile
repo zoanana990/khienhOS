@@ -48,6 +48,7 @@ KERNEL_FILES  = $(BUILD)/kernel.asm.o       \
                 $(FS_BUILD)/fat16.o         \
                 $(DISK_BUILD)/stream.o      \
                 $(COMMON_BUILD)/string.o    \
+                $(COMMON_BUILD)/print.o     \
 
 # refer to the arm_hal project
 # TODO: refine the makefile with makefile functions
