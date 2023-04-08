@@ -26,7 +26,7 @@ typedef u32 fat_item_t;
 
 /* These two structure are the bootloader instruction there
  * */
-typedef struct fat_header_extended
+typedef __attribute__((packed)) struct fat_header_extended
 {
     u8  drive_number;
     u8  win_nt_bit;
@@ -34,9 +34,9 @@ typedef struct fat_header_extended
     u32 volume_id;
     u8  volume_id_string[11];
     u8  system_id_string[8];
-} __attribute__((packed)) fat_header_extended_t;
+} fat_header_extended_t;
 
-typedef struct fat_header
+typedef __attribute__((packed)) struct fat_header
 {
     u8  short_jmp_ins[3];
     u8  oem_identifier[8];
@@ -52,7 +52,7 @@ typedef struct fat_header
     u16 number_of_heads;
     u32 hidden_setors;
     u32 sectors_big;
-} __attribute__((packed)) fat_header_t;
+} fat_header_t;
 
 typedef struct fat_h{
     fat_header_t primary_header;
@@ -61,7 +61,7 @@ typedef struct fat_h{
     } shared;
 } fat_h_t;
 
-typedef struct fat_directory_item
+typedef __attribute__((packed)) struct fat_directory_item
 {
     u8  filename[8];
     u8  ext[3];
@@ -76,7 +76,7 @@ typedef struct fat_directory_item
     u16 last_mod_date;
     u16 low_16_bits_first_cluster;
     u32 filesize;
-} __attribute__((packed)) fat_directory_item_t;
+} fat_directory_item_t;
 
 typedef struct fat_directory
 {

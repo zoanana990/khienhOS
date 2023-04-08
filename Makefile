@@ -32,10 +32,9 @@ KERNEL        = $(BIN)/kernel.bin
 BOOT          = $(BIN)/boot.bin
 OS            = $(BIN)/os.bin
 LINKER        = $(SRC)/linker.ld
-KERNEL_FILES  = $(COMMON_BUILD)/string.o    \
-				$(COMMON_BUILD)/print.o     \
-                $(BUILD)/kernel.asm.o       \
+KERNEL_FILES  = $(BUILD)/kernel.asm.o       \
                 $(BUILD)/kernel.o           \
+                $(BUILD)/print.o            \
                 $(IDT_BUILD)/idt.asm.o      \
                 $(IDT_BUILD)/idt.o          \
                 $(IO_BUILD)/io.asm.o        \
@@ -49,7 +48,7 @@ KERNEL_FILES  = $(COMMON_BUILD)/string.o    \
                 $(FS_BUILD)/file.o          \
                 $(FS_BUILD)/fat16.o         \
                 $(DISK_BUILD)/stream.o      \
-
+                $(COMMON_BUILD)/string.o    \
 
 # refer to the arm_hal project
 # TODO: refine the makefile with makefile functions
