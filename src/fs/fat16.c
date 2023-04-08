@@ -33,8 +33,6 @@ void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode)
     return NULL;
 }
 
-
-
 s32 fat16_resolve(disk_t *disk)
 {
     kerr_no_t ret = kerr_OK;
@@ -43,5 +41,7 @@ s32 fat16_resolve(disk_t *disk)
     fat_private_t *fat_private = kzalloc(sizeof(fat_private_t));
     fat16_init_private(disk, fat_private);
 
-    return 0;
+    disk->fs_private = fat_private;
+
+    return ret;
 }
