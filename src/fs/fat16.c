@@ -33,8 +33,6 @@ void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode)
     return NULL;
 }
 
-
-
 s32 fat16_resolve(disk_t *disk)
 {
     kerr_no_t ret = kerr_OK;

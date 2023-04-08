@@ -1,10 +1,7 @@
 #include <khienh/kernel.h>
-#include <khienh/type.h>
-#include <khienh/font_color.h>
 #include <memory/kheap.h>
 #include <memory/page.h>
 #include <idt/idt.h>
-#include <common/string.h>
 #include <fs/file.h>
 #include <disk/stream.h>
 
@@ -13,7 +10,7 @@ paging_4gb_chunk_t *kernel_chunk = 0;
 void kernel_main()
 {
     console_init();
-    print("Hello World\n");
+    print("khienhOS Copyright @zoanana990 2023 airoha.Inc \n");
 
     /* Initialize the idt */
     idt_init();
