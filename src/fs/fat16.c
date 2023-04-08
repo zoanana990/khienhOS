@@ -43,5 +43,5 @@ s32 fat16_resolve(disk_t *disk)
     fat_private_t *fat_private = kzalloc(sizeof(fat_private_t));
     fat16_init_private(disk, fat_private);
 
-    return 0;
+    return ret;
 }
