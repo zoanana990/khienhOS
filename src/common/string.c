@@ -25,6 +25,48 @@ s32 strnlen(const s8 *ptr, s32 max)
     return i;
 }
 
+/* @function: strlen_terminator
+ * @description:
+ * find the terminator or the '\0'
+ */
+s32 strlen_terminator(const s8 *str, s32 max, s8 terminator)
+{
+    s32 index = 0;
+    for(index = 0; index < max; index++)
+    {
+        if(str[index] == '\0' || str[index] == terminator)
+            break;
+    }
+    return index;
+}
+
+/* turn the character to the lower case */
+s8 tolower(s8 s)
+{
+    /* check the ASCII table */
+    if(s >= 'A' && s <= 'Z')
+    {
+        s += 32;
+    }
+    return s;
+}
+
+s32 istrncmp(const s8 *s1, const s8 *s2, s32 n)
+{
+    register u8 u1, u2;
+
+    while(n-- > 0)
+    {
+        u1 = (u8) *s1++;
+        u2 = (u8) *s2++;
+        if(u1 != u2 && tolower(u1) != tolower(u2))
+            return u1 - u2;
+        if(u1 == '\0')
+            return 0;
+    }
+    return 0;
+}
+
 /* @function: strncmp
  * @description: compare two string, 
  * if s1 == s2, return 0

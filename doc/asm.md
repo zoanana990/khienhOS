@@ -16,5 +16,15 @@ asm ( "assembly code"
 );
 ```
 
+Notice:
+- use `__inline__` instead of `inline`, and use `__asm__` instead of `asm`
+
+Qualifiers:
+- `volatile`
+- `inline`
+- `goto`
+
+
+
 Reference:
 - [Extended Asm - Assembler Instructions with C Expression Operands](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)

@@ -3,6 +3,7 @@
 #include <memory/memory.h>
 #include <memory/kheap.h>
 #include <khienh/type.h>
+#include <khienh/kernel.h>
 #include <disk/disk.h>
 #include <common/string.h>
 
@@ -114,7 +115,7 @@ file_mode_t file_get_mode_by_string(const s8 *str)
     return mode;
 }
 
-s32 fopen(const s8 *filename, const s8 *mode)
+s32 fopen(const s8 *filename, const s8 *mode_str)
 {
     kerr_no_t ret = kerr_OK;
 
@@ -135,6 +136,41 @@ s32 fopen(const s8 *filename, const s8 *mode)
         goto out;
     }
 
+    if(disk->filesystem == NULL)
+    {
+        ret = -kerr_FSNOTUS;
+        goto out;
+    }
+
+    file_mode_t mode = file_get_mode_by_string(mode_str);
+    if(mode == FILE_MODE_INVALID)
+    {
+        ret = -kerr_INVARG;
+        goto out;
+    }
+
+    /* use the fat16_open function */
+    void *descriptor_private_data = disk->filesystem->open(disk, root_path->head, mode);
+    if(IS_ERR(descriptor_private_data))
+    {
+        ret = ERROR_I(descriptor_private_data);
+        goto out;
+    }
+
+    fd_t *desc = NULL;
+    ret = file_new_descriptor(&desc);
+    if(ret < 0)
+    {
+        goto out;
+    }
+
+    desc->filesystem = disk->filesystem;
+    desc->private = descriptor_private_data;
+    desc->disk = disk;
+    ret = desc->index;
+
     out:
+    /* fopen should not return negative value */
+    if(ret < 0) ret = 0;
     return ret;
 }

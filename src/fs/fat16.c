@@ -32,8 +32,15 @@ fs_t *fat16_init()
     return &fat16_fs;
 }
 
+/* we can open fat16 files */
 void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode)
 {
+    if(mode != FILE_MODE_READ)
+    {
+        return ERROR(-kerr_RDONLY);
+    }
+
+    fat_file_desctitor
     return NULL;
 }
 

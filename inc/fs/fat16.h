@@ -99,7 +99,7 @@ typedef struct fat_item
 
 typedef struct fat_item_descriptor
 {
-    fat_item_structure_t * item;
+    fat_item_structure_t *item;
     u32 pos;
 } fat_item_descriptor_t;
 
