@@ -5,6 +5,7 @@
 
 s32 strlen(const s8 *);
 s32 strnlen(const s8 *, s32);
+s32 strncmp(const s8 *s1, const s8 *s2, s32 n);
 s8 *strcpy(s8 *dst, const s8 *src);
 bool_t is_digit(s8 c);
 s32 to_numeric_digit(s8 c);

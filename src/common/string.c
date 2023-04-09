@@ -25,6 +25,28 @@ s32 strnlen(const s8 *ptr, s32 max)
     return i;
 }
 
+/* @function: strncmp
+ * @description: compare two string, 
+ * if s1 == s2, return 0
+ * else if s1 > s2, return positive number
+ * else return negative number
+ */
+s32 strncmp(const s8 *s1, const s8 *s2, s32 n)
+{
+    register u8 u1, u2;
+
+    while(n-- > 0)
+    {
+        u1 = (u8) *s1++;
+        u2 = (u8) *s2++;
+        if(u1 != u2)
+            return u1 - u2;
+        if(u1 == '\0')
+            return 0;
+    }
+    return 0;
+}
+
 bool_t is_digit(s8 c)
 {
     return c >= 47 && c <= 58;

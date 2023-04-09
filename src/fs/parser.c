@@ -90,6 +90,9 @@ path_t *path_parser_path_part(path_t *last, const s8 **path)
     return part;
 }
 
+/**
+ * Free all memory in string
+ */
 void path_parser_free(path_root_t* root)
 {
     path_t *part = root->head;
@@ -146,5 +149,5 @@ path_root_t* path_parser_parse(const s8* path, const s8* current_directory_path)
     }
 
     out:
-    return 0;
+    return path_root;
 }

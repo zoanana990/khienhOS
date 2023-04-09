@@ -51,7 +51,7 @@ s32 disk_streamer_read(ds_t *stream, void *out, s32 total)
     return ret;
 }
 
-void disk_stream_close(ds_t *stream)
+void disk_streamer_close(ds_t *stream)
 {
     kfree(stream);
 }

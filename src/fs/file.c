@@ -1,8 +1,10 @@
 #include <fs/file.h>
+#include <fs/fat16.h>
 #include <memory/memory.h>
 #include <memory/kheap.h>
 #include <khienh/type.h>
-#include <fs/fat16.h>
+#include <disk/disk.h>
+#include <common/string.h>
 
 fs_t *filesystems[KHIENHOS_MAX_FILESYSTEMS];
 fd_t *file_descriptors[KHIENHOS_MAX_FILE_DESCRIPTORS];
@@ -92,11 +94,47 @@ fs_t *fs_resolve(disk_t *disk)
     return fs;
 }
 
+file_mode_t file_get_mode_by_string(const s8 *str)
+{
+    file_mode_t mode = FILE_MODE_INVALID;
+
+    if(strncmp(str, "r", 1) == 0)
+    {
+        mode = FILE_MODE_READ;
+    }
+    else if(strncmp(str, "w", 1) == 0)
+    {
+        mode = FILE_MODE_WRITE;
+    }
+    else if(strncmp(str, "a", 1) == 0)
+    {
+        mode = FILE_MODE_APPEND;
+    }
+
+    return mode;
+}
+
 s32 fopen(const s8 *filename, const s8 *mode)
 {
     kerr_no_t ret = kerr_OK;
 
-    path_t *root_path = path_parser_parse(filename, NULL);
+    path_root_t *root_path = path_parser_parse(filename, NULL);
 
+    if(root_path == NULL)
+    {
+        ret = -kerr_INVARG;
+        goto out;
+    }
+
+    disk_t *disk = disk_get(root_path->drive_no);
+
+    /* Check the file system exist on disk, we cannot open the file withour the filesystem */
+    if(disk == NULL)
+    {
+        ret = -kerr_IO;
+        goto out;
+    }
+
+    out:
     return ret;
 }
