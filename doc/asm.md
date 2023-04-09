@@ -15,3 +15,6 @@ asm ( "assembly code"
       : list of clobbered registers      /* optional */
 );
 ```
+
+Reference:
+- [Extended Asm - Assembler Instructions with C Expression Operands](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)

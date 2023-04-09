@@ -29,7 +29,7 @@ static void fat16_init_private(disk_t *disk, fat_private_t *private)
 fs_t *fat16_init()
 {
     strcpy(fat16_fs.name, "FAT16");
-    return NULL;
+    return &fat16_fs;
 }
 
 void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode)

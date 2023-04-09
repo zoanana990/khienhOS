@@ -91,3 +91,12 @@ fs_t *fs_resolve(disk_t *disk)
 
     return fs;
 }
+
+s32 fopen(const s8 *filename, const s8 *mode)
+{
+    kerr_no_t ret = kerr_OK;
+
+    path_t *root_path = path_parser_parse(filename, NULL);
+
+    return ret;
+}

@@ -9,6 +9,8 @@
 
 #include <khienh/type.h>
 
+/* TODO use inline assembly */
+
 /* read one byte from the port */
 u8 insb(u16 port);
 
@@ -16,6 +18,6 @@ u8 insb(u16 port);
 u16 insw(u16 port);
 
 void outb(u16 port, u8 val);
-void outw(u16 port, u8 val);
+void outw(u16 port, u16 val);
 
 #endif
