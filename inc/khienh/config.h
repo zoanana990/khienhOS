@@ -20,5 +20,6 @@
 /* file system */
 #define KHIENHOS_MAX_FILESYSTEMS      12
 #define KHIENHOS_MAX_FILE_DESCRIPTORS 512
+#define KHIENHOS_MAX_PATH_SIZE        512
 
 #endif

@@ -63,8 +63,8 @@ typedef struct fat_h{
 
 typedef struct fat_directory_item
 {
-    u8  filename[8];
-    u8  ext[3];
+    u8  filename[8]; /* filename */
+    u8  ext[3];      /* extension */
     u8  attribute;
     u8  reserved;
     u8  creation_time_tenths_of_a_sec;
@@ -90,18 +90,18 @@ typedef struct fat_item
 {
     union
     {
-        struct fat_directory_item* item;
-        struct fat_directory* directory;
+        fat_directory_item_t* item;
+        fat_directory_t* directory;
     };
 
     fat_item_t type;
 } fat_item_structure_t;
 
-typedef struct fat_item_descriptor
+typedef struct fat_file_descriptor
 {
     fat_item_structure_t *item;
     u32 pos;
-} fat_item_descriptor_t;
+} fat_file_descriptor_t;
 
 typedef struct fat_private
 {
@@ -121,5 +121,6 @@ typedef struct fat_private
 void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode);
 s32   fat16_resolve(disk_t *disk);
 fs_t *fat16_init();
+s32 fat16_get_total_items_for_directory(disk_t *disk, u32 directory_start_sector);
 
 #endif //KHIENHOS_FAT16_H

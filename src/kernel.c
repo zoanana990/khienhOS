@@ -37,5 +37,12 @@ void kernel_main()
     disk_streamer_seek(stream, 0x201);
     unsigned char c = 0;
     disk_streamer_read(stream, &c, 1);
+
+    s32 fd = fopen("0:/hello2.txt", "r");
+    if(fd)
+    {
+        print("open hello2.txt\n");
+    }
+
     while(1) {}
 }
