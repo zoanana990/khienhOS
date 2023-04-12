@@ -110,7 +110,7 @@ void path_parser_free(path_root_t* root)
 
 path_root_t* path_parser_parse(const s8* path, const s8* current_directory_path)
 {
-    kerr_no_t ret = kerr_OK;
+    kerr_no_t ret;
 
     const s8* tmp_path = path;
     path_root_t *path_root = NULL;

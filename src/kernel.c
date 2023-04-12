@@ -12,6 +12,7 @@ void kernel_main()
     console_init();
     print("khienhOS Copyright @zoanana990 2023 airoha.Inc \n");
 
+    print("test %d\n", 10);
     /* Initialize the idt */
     idt_init();
 

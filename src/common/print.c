@@ -1,8 +1,13 @@
+/* This file */
+
 #include <khienh/print.h>
 
 static u16 *video_mem;
 static u16 console_row = 0;
 static u16 console_col = 0;
+
+/* to print char */
+static s8  digits[] = "0123456789abcdef";
 
 /* put character, and we can assign the color for the character */
 u16 put_char(s8 c, s8 color)
@@ -45,17 +50,103 @@ void console_init()
     }
 }
 
-void print(const s8 *str, ...)
+static void print_integer(s32 xx, s32 base, s32 sign)
 {
-    va_list va;
-    va_start(va, str);
+    s8 buf[16];
+    s32 i;
+    u32 x;
 
-    /* old version for print functions */
-    size_t len = strlen(str);
-    for(s32 i = 0; i < len; i++)
+    if(sign && (sign = xx < 0))
     {
-        console_write_char(str[i], FC_TEXT);
+        x = -xx;
+    }
+    else
+    {
+        x = xx;
     }
 
-    va_end(va);
+    i = 0;
+    do{
+        buf[i++] = digits[x % base];
+    }while((x /= base) != 0);
+
+    if(sign)
+        buf[i++] = '-';
+    while(i-- >= 0)
+        console_write_char(buf[i], FC_TEXT);
+}
+
+/* u64: xx
+ * sizeof(u64) * 8 - 4 = 16 * 8 - 4
+ * */
+static void print_pointer(u32 xx)
+{
+    s32 i;
+    console_write_char('0', FC_TEXT);
+    console_write_char('x', FC_TEXT);
+    for(i = 0; i < (sizeof(u32) * 2); i++, xx <<= 4)
+    {
+        console_write_char(digits[xx >> (sizeof(u32) * 8 - 4)], FC_TEXT);
+    }
+}
+
+/* print to the console, only print %d, %x, %p, %s */
+void print(s8 *str, ...)
+{
+    va_list va;
+
+    s32 i, c;
+    s8 *s;
+
+    va_start(va, str);
+    for(i = 0; (c = str[i] & 0xff) != 0; i++)
+    {
+        /* if c is not %, just print the character */
+        if(c != '%')
+        {
+            console_write_char(c, FC_TEXT);
+            continue;
+        }
+
+        /* if so, consider the following condition
+         * there is no character, print '%'
+         * d: %d, print the integer
+         * s: %s, print the string
+         * x: %x, print the integer based on 16
+         * p: %p, print the pointer address
+         * */
+        c = str[++i] & 0xff;
+        if(c == 0)
+        {
+            console_write_char('%', FC_TEXT);
+            break;
+        }
+
+        switch(c)
+        {
+            case 'd':
+                print_integer(va_arg(va, s32), 10, 1);
+                break;
+            case 'x':
+                print_integer(va_arg(va, s32), 16, 1);
+                break;
+            case 'p':
+                print_pointer(va_arg(va, u32));
+                break;
+            case 's':
+                if((s = va_arg(va, s8 *)) == 0)
+                    s = "(NULL)";
+                for(; *s; s++)
+                    console_write_char(*s, FC_TEXT);
+                break;
+            case '%':
+                console_write_char('%', FC_TEXT);
+                break;
+            default:
+                console_write_char('%', FC_TEXT);
+                console_write_char('c', FC_TEXT);
+                break;
+        }
+        va_end(va);
+    }
 }

@@ -117,7 +117,7 @@ file_mode_t file_get_mode_by_string(const s8 *str)
 
 s32 fopen(const s8 *filename, const s8 *mode_str)
 {
-    kerr_no_t ret = kerr_OK;
+    kerr_no_t ret;
 
     path_root_t *root_path = path_parser_parse(filename, NULL);
 

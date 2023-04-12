@@ -19,7 +19,7 @@ typedef enum
 } debug_level_t;
 
 /* TODO : do all printf function in print */
-void print(const s8 *str, ...);
+void print(s8 *str, ...);
 void console_init();
 
 #endif //KHIENHOS_PRINT_H
