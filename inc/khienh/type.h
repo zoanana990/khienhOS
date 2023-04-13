@@ -20,7 +20,11 @@ typedef char        s8;
 typedef s32 ssize_t;
 typedef s32 bool_t;
 
-/* error code */
+typedef s32 kerr_no_t;
+
+/* error code
+ * TODO print error message
+ * */
 typedef enum
 {
     kerr_OK = 0,
@@ -36,7 +40,7 @@ typedef enum
     kerr_NOMEM,     /* no memory */
     kerr_FSNOTUS,   /* no filesystem */
     kerr_RDONLY,    /* read only */
-} kerr_no_t;
+} kerr_no_e;
 
 /* This section is used to implement printf
  * to make a variable length */

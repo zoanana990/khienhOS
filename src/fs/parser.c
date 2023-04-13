@@ -15,7 +15,9 @@ static s32 path_valid_format(const s8 *filename)
 static s32 path_parser_get_drive_by_path(const s8 **path)
 {
     if(!path_valid_format(*path))
-        return kerr_BADPATH;
+    {
+        return -kerr_BADPATH;
+    }
 
     /* extract the data from 0:/text.txt to text.txt*/
     s32 drive_no = to_numeric_digit(*path[0]);
@@ -28,6 +30,10 @@ static s32 path_parser_get_drive_by_path(const s8 **path)
 static path_root_t *path_parser_create_root(s32 device_number)
 {
     path_root_t *path_r = kzalloc(sizeof(path_root_t));
+    if(path_r == NULL)
+    {
+        return NULL;
+    }
     path_r->drive_no = device_number;
     path_r->head = NULL;
 
@@ -44,6 +50,10 @@ static path_root_t *path_parser_create_root(s32 device_number)
 static const s8* path_parser_get_path_part(const s8 **path)
 {
     s8 *result_path_part = kzalloc(KHIENHOS_MAX_PATH);
+    if(result_path_part == NULL)
+    {
+        return NULL;
+    }
 
     s32 i = 0;
     while(**path != '/' && **path != 0x00)
@@ -110,36 +120,50 @@ void path_parser_free(path_root_t* root)
 
 path_root_t* path_parser_parse(const s8* path, const s8* current_directory_path)
 {
-    kerr_no_t ret;
+    s32 no_drive;
 
     const s8* tmp_path = path;
     path_root_t *path_root = NULL;
+    print("[%s]: temp path = %s\n", __func__, tmp_path);
 
+    /* check the path length */
     if(strlen(path) > KHIENHOS_MAX_PATH)
     {
         goto out;
     }
 
     /* get the device drive number */
-    ret = path_parser_get_drive_by_path(&tmp_path);
-    if(ret < 0)
+    no_drive = path_parser_get_drive_by_path(&tmp_path);
+    if(no_drive < 0)
+    {
+        path_root = NULL;
+        goto out;
+    }
+    print("[%s]: after path_parser..., temp path = %s\n", __func__, tmp_path);
+
+    /* create a root path e.g. 0:/, 1:/ etc.
+     *
+     * take the 0:/hello.txt as example:
+     * so that the root path will be
+     * drive_no = 0
+     * head = NULL;
+     * */
+    path_root = path_parser_create_root(no_drive);
+    if(path_root == NULL)
     {
         goto out;
     }
 
-    /* create a root path e.g. 0:/, 1:/ etc. */
-    path_root = path_parser_create_root(ret);
-    if(!path_root)
-    {
-        goto out;
-    }
-
-    /* create a path, used a linked list to connect the path string */
+    /* create a path, used a linked list to connect the path string
+     *
+     * the current path is hello.txt
+     * */
     path_t *first_part = path_parser_path_part(NULL, &tmp_path);
     if(!first_part)
     {
         goto out;
     }
+    print("[%s]: after path_parser_path_part..., temp path = %s\n", __func__, first_part->part);
 
     path_root->head = first_part;
     path_t *part = path_parser_path_part(first_part, &tmp_path);

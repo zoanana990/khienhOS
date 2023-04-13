@@ -12,15 +12,17 @@ void kernel_main()
     console_init();
     print("khienhOS Copyright @zoanana990 2023 airoha.Inc \n");
 
-    print("test %d\n", 10);
-    /* Initialize the idt */
-    idt_init();
-
     /* initialize the heap */
     kheap_init();
 
     /* initialize the file system */
     fs_init();
+
+    /* initialize and search the disk */
+    disk_search_and_init();
+
+    /* Initialize the idt */
+    idt_init();
 
     /* Setup paging */
     kernel_chunk = paging_new_4gb(PAGING_WRITE_PRESENT_ACCESS);
@@ -39,10 +41,11 @@ void kernel_main()
     unsigned char c = 0;
     disk_streamer_read(stream, &c, 1);
 
-    s32 fd = fopen("0:/hello2.txt", "r");
+    s32 fd = fopen("0:/hello.txt", "r");
+    print("fd = %d\n", fd);
     if(fd)
     {
-        print("open hello2.txt\n");
+        print("fopen successfully\n");
     }
 
     while(1) {}

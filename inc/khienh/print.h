@@ -20,6 +20,7 @@ typedef enum
 
 /* TODO : do all printf function in print */
 void print(s8 *str, ...);
+void print_dbg(s8 *str, ...);
 void console_init();
 
 #endif //KHIENHOS_PRINT_H

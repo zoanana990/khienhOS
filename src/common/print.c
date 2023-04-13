@@ -1,12 +1,15 @@
-/* This file */
-
 #include <khienh/print.h>
 
 static u16 *video_mem;
 static u16 console_row = 0;
 static u16 console_col = 0;
 
-/* to print char */
+/*
+ * This is a simple and clear design
+ * the number index is corresponding for the mod value
+ * for example:
+ * '0' is corresponding the number % n == 0
+ * */
 static s8  digits[] = "0123456789abcdef";
 
 /* put character, and we can assign the color for the character */
@@ -90,7 +93,7 @@ static void print_pointer(u32 xx)
     }
 }
 
-/* print to the console, only print %d, %x, %p, %s */
+/* print to the console, only print %d, %x, %p, %s, %c */
 void print(s8 *str, ...)
 {
     va_list va;
@@ -118,7 +121,6 @@ void print(s8 *str, ...)
         c = str[++i] & 0xff;
         if(c == 0)
         {
-            console_write_char('%', FC_TEXT);
             break;
         }
 
@@ -144,9 +146,20 @@ void print(s8 *str, ...)
                 break;
             default:
                 console_write_char('%', FC_TEXT);
-                console_write_char('c', FC_TEXT);
+                console_write_char(c, FC_TEXT);
                 break;
         }
         va_end(va);
     }
 }
+
+/* not really realize the va_... macros */
+void print_dbg(s8 *str, ...)
+{
+    va_list args;
+    va_start(args, str);
+    print("[%s]: %s",__func__, args);
+    va_end(args);
+}
+
+/* TODO need to identify the message by using different color */

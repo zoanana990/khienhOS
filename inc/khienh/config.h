@@ -1,6 +1,8 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+#define KHIENHOS_KERNEL_VERSION     "v0.1"
+
 /* code segment and data segment, same as boot.asm */
 #define KERNEL_CODE_SELECTOR        0x08
 #define KERNEL_DATA_SELECTOR        0x10

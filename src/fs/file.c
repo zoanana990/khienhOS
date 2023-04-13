@@ -53,7 +53,7 @@ void fs_init()
 
 static kerr_no_t file_new_descriptor(fd_t **desc_out)
 {
-    kerr_no_t ret = kerr_NOMEM;
+    kerr_no_t ret = -kerr_NOMEM;
     for(s32 i = 0; i < KHIENHOS_MAX_FILE_DESCRIPTORS; i++)
     {
         if(file_descriptors[i] == 0)
@@ -117,28 +117,34 @@ file_mode_t file_get_mode_by_string(const s8 *str)
 
 s32 fopen(const s8 *filename, const s8 *mode_str)
 {
-    kerr_no_t ret;
+    s32 ret;
 
+    /*
+     * Make a linked list, connect all string to the
+     * */
     path_root_t *root_path = path_parser_parse(filename, NULL);
 
     if(root_path == NULL)
     {
         ret = -kerr_INVARG;
+        print("rootpath is NULL ret: %d\n", ret);
         goto out;
     }
 
+    /* if it is successfully */
     disk_t *disk = disk_get(root_path->drive_no);
-
     /* Check the file system exist on disk, we cannot open the file withour the filesystem */
     if(disk == NULL)
     {
         ret = -kerr_IO;
+        print("Disk is NULL ret: %d\n", ret);
         goto out;
     }
 
     if(disk->filesystem == NULL)
     {
         ret = -kerr_FSNOTUS;
+        print("filesystem is NULL ret: %d\n", ret);
         goto out;
     }
 
@@ -146,6 +152,7 @@ s32 fopen(const s8 *filename, const s8 *mode_str)
     if(mode == FILE_MODE_INVALID)
     {
         ret = -kerr_INVARG;
+        print("file_get_mode_by_string ret: %d\n", ret);
         goto out;
     }
 
@@ -154,11 +161,13 @@ s32 fopen(const s8 *filename, const s8 *mode_str)
     if(IS_ERR(descriptor_private_data))
     {
         ret = ERROR_I(descriptor_private_data);
+        print("descriptor private data ret: %d\n", ret);
         goto out;
     }
 
     fd_t *desc = NULL;
     ret = file_new_descriptor(&desc);
+    print("file_new_descriptor ret: %d\n", ret);
     if(ret < 0)
     {
         goto out;
@@ -171,6 +180,5 @@ s32 fopen(const s8 *filename, const s8 *mode_str)
 
     out:
     /* fopen should not return negative value */
-    if(ret < 0) ret = 0;
-    return ret;
+    return ret < 0 ? 0 : ret;
 }

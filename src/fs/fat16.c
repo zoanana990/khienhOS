@@ -312,11 +312,16 @@ fat_item_structure_t *fat16_find_item_in_directory(disk_t *disk, fat_directory_t
 {
     fat_item_structure_t *f_item = NULL;
     s8 temp_filename[KHIENHOS_MAX_PATH_SIZE];
+    print("[%s]: directory total: %d\n", __func__, directory->total);
+
+    /* Cannot get into the loop */
     for (s32 i = 0; i < directory->total; i++)
     {
         fat16_get_full_relative_filename(&directory->item[i], temp_filename, sizeof(temp_filename));
+        print("[%s]: %s\n",__func__, temp_filename);
         if(istrncmp(temp_filename, name, sizeof(temp_filename)) == 0)
         {
+            print("[%s]\n", __func__);
             f_item = fat16_new_fat_item_for_directory_item(disk, &directory->item[i]);
         }
     }
@@ -325,6 +330,7 @@ fat_item_structure_t *fat16_find_item_in_directory(disk_t *disk, fat_directory_t
 
 fat_item_structure_t *fat16_get_directory_entry(disk_t *disk, path_t *path)
 {
+    print("[%s]\n", __func__);
     fat_private_t *fat_private = disk->fs_private;
 
     /**
@@ -372,7 +378,6 @@ void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode)
 
     fat_file_descriptor_t *descriptor = NULL;
     descriptor = kzalloc(sizeof(fat_file_descriptor_t));
-
     if(descriptor == NULL)
     {
         return ERROR(-kerr_NOMEM);
@@ -385,7 +390,7 @@ void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode)
     }
 
     descriptor->pos = 0;
-    return NULL;
+    return descriptor;
 }
 
 s32 fat16_sector_to_absolute(disk_t *disk, s32 sector)
@@ -483,6 +488,8 @@ s32 fat16_get_root_directory(disk_t *disk, fat_private_t *fat_private, fat_direc
     directory->total = total_items;
     directory->sector_pos = root_dir_sector_pos;
     directory->ending_sector_pos = root_dir_sector_pos + (root_dir_size / disk->sector_size);
+
+
 
     out:
     return ret;
