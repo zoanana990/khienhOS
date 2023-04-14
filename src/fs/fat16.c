@@ -244,6 +244,7 @@ fat_directory_t* fat16_load_fat_directory(disk_t* disk, fat_directory_item_t* it
 
     s32 cluster = fat16_get_first_cluster(item);
     s32 cluster_sector = fat16_cluster_to_sector(fat_private, cluster);
+    print("[%s]: cluster = %d, cluster_sector = %d\n", __func__, cluster, cluster_sector);
     s32 total_items = fat16_get_total_items_for_directory(disk, cluster_sector);
     directory->total = total_items;
     s32 directory_size = directory->total * sizeof(fat_directory_item_t);
@@ -438,6 +439,7 @@ s32 fat16_get_total_items_for_directory(disk_t *disk, u32 directory_start_sector
         i++;
     }
     ret = i;
+    print("[%s]: i = %d\n", __func__, i);
 
     out:
     return ret;
@@ -489,7 +491,7 @@ s32 fat16_get_root_directory(disk_t *disk, fat_private_t *fat_private, fat_direc
     directory->sector_pos = root_dir_sector_pos;
     directory->ending_sector_pos = root_dir_sector_pos + (root_dir_size / disk->sector_size);
 
-
+    print("[%s]: total_item = %d\n", __func__, total_items);
 
     out:
     return ret;

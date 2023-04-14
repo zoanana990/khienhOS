@@ -12,10 +12,3 @@ jobs:
             sudo apt-get install -q -y clang-format-12
             sh .ci/check-format.sh
       shell: bash
-  make_test:
-    runs-on: macOS
-    steps:
-      run: |
-        brew install i686-elf-gcc
-        brew install qemu
-        make all
