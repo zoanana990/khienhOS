@@ -17,12 +17,16 @@ fd_t *file_descriptors[KHIENHOS_MAX_FILE_DESCRIPTORS];
 /********************************
  * local function
  ********************************/
-static fs_t **fs_get_free_filesystem()
+static fs_t **fs_get_free_filesystem(void)
 {
     s32 i = 0;
     for(; i < KHIENHOS_MAX_FILESYSTEMS; i++)
+    {
         if(filesystems[i] == 0)
+        {
             return &filesystems[i];
+        }
+    }
 
     return NULL;
 }
@@ -125,7 +129,7 @@ s32 fopen(const s8 *filename, const s8 *mode_str)
      * */
     path_root_t *root_path = path_parser_parse(filename, NULL);
 
-    if(root_path == NULL)
+    if(root_path == NULL || root_path->head == NULL)
     {
         ret = -kerr_INVARG;
         print("rootpath is NULL ret: %d\n", ret);
@@ -135,25 +139,17 @@ s32 fopen(const s8 *filename, const s8 *mode_str)
     /* if it is successfully */
     disk_t *disk = disk_get(root_path->drive_no);
     /* Check the file system exist on disk, we cannot open the file withour the filesystem */
-    if(disk == NULL)
+    if(disk == NULL || disk->filesystem == NULL)
     {
         ret = -kerr_IO;
-        print("Disk is NULL ret: %d\n", ret);
         goto out;
     }
 
-    if(disk->filesystem == NULL)
-    {
-        ret = -kerr_FSNOTUS;
-        print("filesystem is NULL ret: %d\n", ret);
-        goto out;
-    }
 
     file_mode_t mode = file_get_mode_by_string(mode_str);
     if(mode == FILE_MODE_INVALID)
     {
         ret = -kerr_INVARG;
-        print("file_get_mode_by_string ret: %d\n", ret);
         goto out;
     }
 

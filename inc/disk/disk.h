@@ -51,5 +51,6 @@ disk_t *disk_get(s32 id);
 
 
 s32 disk_read_block(disk_t *local_disk, u32 lba, s32 total, void *buf);
+void print_disk_content(disk_t *disk);
 
 #endif //KHIENHOS_DISK_H

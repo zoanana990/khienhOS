@@ -94,6 +94,7 @@ void fat16_get_full_relative_filename(fat_directory_item_t *item, s8 *out, s32 l
 
     /* split the filename to valid string */
     fat16_to_proper_string(&out_temp, (s8 *)item->filename);
+    LOG("item->filename = %s\n", item->filename);
 
     /* split the extension to valid string */
     if(item->ext[0] != 0x00 && item->ext[0] != 0x20)
@@ -352,16 +353,17 @@ fat_item_structure_t *fat16_find_item_in_directory(disk_t *disk, fat_directory_t
 {
     fat_item_structure_t *f_item = NULL;
     s8 temp_filename[KHIENHOS_MAX_PATH_SIZE];
-    print("[%s]: directory total_entry_count: %d\n", __func__, directory->total);
+    print("[%s]: directory total_entry_count: %d, name=%s\n", __func__, directory->total, name);
 
     /* Cannot get into the loop */
     for (s32 i = 0; i < directory->total; i++)
     {
         fat16_get_full_relative_filename(&directory->item[i], temp_filename, sizeof(temp_filename));
-        print("[%s]: %s\n",__func__, temp_filename);
+        LOG("temp_filename = %s\n", temp_filename);
+
         if(istrncmp(temp_filename, name, sizeof(temp_filename)) == 0)
         {
-            print("[%s]\n", __func__);
+            LOG("string compare equalization\n");
             f_item = fat16_new_fat_item_for_directory_item(disk, &directory->item[i]);
         }
     }
@@ -372,8 +374,9 @@ fat_item_structure_t *fat16_get_directory_entry(disk_t *disk, path_t *path)
 {
     fat_private_t *fat_private = disk->fs_private;
 
-    print("fat_private->root_directory->total = %d\n", fat_private->root_directory.total);
-
+    LOG("fat_private->root_directory->total = %d\n", fat_private->root_directory.total);
+    LOG("fat_private->root_directory.item->filename = %s\n", fat_private->root_directory.item->filename);
+    LOG("fat_private->root_directory.item->ext = %s\n", fat_private->root_directory.item->ext);
     /**
      * What we are doing here?
      *

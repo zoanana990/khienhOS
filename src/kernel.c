@@ -21,8 +21,7 @@ void kernel_main()
     /* initialize and search the disk */
     disk_search_and_init();
 
-//    disk_t *primary_disk = disk_get(0);
-//    print("primary_disk->fs_private->");
+    print_disk_content(disk_get(0));
 
     /* Initialize the idt */
     idt_init();
@@ -39,10 +38,7 @@ void kernel_main()
     /* enable interrupt */
     enable_interrupt();
 
-    ds_t* stream = disk_streamer_new(0);
-    disk_streamer_seek(stream, 0x201);
-    unsigned char c = 0;
-    disk_streamer_read(stream, &c, 1);
+    print_disk_content(disk_get(0));
 
     s32 fd = fopen("0:/hello.txt", "r");
     print("fd = %d\n", fd);

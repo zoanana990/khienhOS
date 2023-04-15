@@ -99,6 +99,7 @@ all: clean mkd $(BOOT) $(KERNEL)
 	sudo mount -t vfat $(BIN)/os.bin /mnt/d
 	# Copy a file over
 	sudo cp ./hello.txt /mnt/d
+	cat /mnt/d/hello.txt
 	sudo umount /mnt/d
 
 mkd:

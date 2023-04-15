@@ -1,4 +1,5 @@
 #include <disk/disk.h>
+#include <fs/fat16.h>
 
 disk_t disk;
 
@@ -77,9 +78,10 @@ static s32 disk_read_sector(s32 lba, s32 total, void *buf)
  * */
 void disk_search_and_init()
 {
-    memset(&disk, 0, sizeof(disk_t));
+    memset(&disk, 0, sizeof(disk));
     disk.type = KHIENHOS_DISK_TYPE_REAL;
     disk.sector_size = KHIENHOS_DISK_SECTOR_SIZE;
+    disk.id = 0;
     disk.filesystem = fs_resolve(&disk);
 }
 
@@ -104,4 +106,11 @@ s32 disk_read_block(disk_t *local_disk, u32 lba, s32 total, void *buf)
         return -kerr_IO;
 
     return disk_read_sector(lba, total, buf);
+}
+
+void print_disk_content(disk_t *disk)
+{
+    fat_private_t *fat_private = disk->fs_private;
+    LOG("current content fat_private->root_directory.item->filename = %s\n", fat_private->root_directory.item->filename);
+
 }

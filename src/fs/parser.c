@@ -9,8 +9,9 @@ static s32 path_valid_format(const s8 *filename)
 }
 
 /**
- * Function name: path_parser_get_drive_by_path
- * This function is used to
+ * @func: path_parser_get_drive_by_path
+ * @description:
+ *      This function is used to
  * */
 static s32 path_parser_get_drive_by_path(const s8 **path)
 {
