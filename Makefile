@@ -96,10 +96,10 @@ all: clean mkd $(BOOT) $(KERNEL)
 
 	# due to the padding issue, we need to padding zero to 512 bytes
 	dd if=/dev/zero bs=1048576 count=16 >> $(BIN)/os.bin
-#	sudo mount -t vfat ./bin/os.bin /mnt/d
-#	# Copy a file over
-#	sudo cp ./hello.txt /mnt/d
-#	sudo umount /mnt/d
+	sudo mount -t vfat $(BIN)/os.bin /mnt/d
+	# Copy a file over
+	sudo cp ./hello.txt /mnt/d
+	sudo umount /mnt/d
 
 mkd:
 	$(shell if [ ! -e $(BIN) ];then mkdir -p $(BIN); fi)

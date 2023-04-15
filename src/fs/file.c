@@ -201,6 +201,7 @@ fs_t *fs_resolve(disk_t *disk)
         {
             fs = filesystems[i];
             print("[%s]: i = %d, filesystem: %s\n", __func__, i, fs->name);
+            LOG("filesystem: %s\n", fs->name);
             break;
         }
     }
