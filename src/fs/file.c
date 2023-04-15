@@ -7,9 +7,16 @@
 #include <disk/disk.h>
 #include <common/string.h>
 
+/********************************
+ * local global variable
+ ********************************/
+
 fs_t *filesystems[KHIENHOS_MAX_FILESYSTEMS];
 fd_t *file_descriptors[KHIENHOS_MAX_FILE_DESCRIPTORS];
 
+/********************************
+ * local function
+ ********************************/
 static fs_t **fs_get_free_filesystem()
 {
     s32 i = 0;
@@ -38,17 +45,7 @@ static void fs_static_load()
     fs_insert_filesystem(fat16_init());
 }
 
-/**
- * @func: fs_init
- * @description:
- *      the filesystem initialization.
- * */
-void fs_init()
-{
-    memset(file_descriptors, 0, sizeof(file_descriptors));
-    memset(filesystems, 0, sizeof(filesystems));
-    fs_static_load();
-}
+
 
 static kerr_no_t file_new_descriptor(fd_t **desc_out)
 {
@@ -78,22 +75,6 @@ fd_t *file_get_descriptor(s32 fd)
     return file_descriptors[index];
 }
 
-fs_t *fs_resolve(disk_t *disk)
-{
-    fs_t *fs = 0;
-
-    for(s32 i = 0; i < KHIENHOS_MAX_FILESYSTEMS; i++)
-    {
-        if (filesystems[i] != 0 && filesystems[i]->resolve(disk) == 0)
-        {
-            fs = filesystems[i];
-            break;
-        }
-    }
-
-    return fs;
-}
-
 file_mode_t file_get_mode_by_string(const s8 *str)
 {
     file_mode_t mode = FILE_MODE_INVALID;
@@ -114,6 +95,28 @@ file_mode_t file_get_mode_by_string(const s8 *str)
     return mode;
 }
 
+/********************************
+ * export function
+ ********************************/
+/**
+ * @func: fs_init
+ * @description:
+ *      the filesystem initialization.
+ * */
+void fs_init()
+{
+    memset(file_descriptors, 0, sizeof(file_descriptors));
+    memset(filesystems, 0, sizeof(filesystems));
+    fs_static_load();
+}
+
+/**
+ * @func: fs_open
+ * @filename: the filename with extension
+ * @mode_str: the access mode, e.g., read, write, append etc.
+ * @description:
+ *      open the file.
+ * */
 s32 fopen(const s8 *filename, const s8 *mode_str)
 {
     s32 ret;
@@ -180,4 +183,26 @@ s32 fopen(const s8 *filename, const s8 *mode_str)
     out:
     /* fopen should not return negative value */
     return ret < 0 ? 0 : ret;
+}
+
+/**
+ * @func: fs_resolve
+ * @disk:
+ * @description
+ * */
+fs_t *fs_resolve(disk_t *disk)
+{
+    fs_t *fs = 0;
+
+    for(s32 i = 0; i < KHIENHOS_MAX_FILESYSTEMS; i++)
+    {
+        if (filesystems[i] != 0 && filesystems[i]->resolve(disk) == 0)
+        {
+            fs = filesystems[i];
+            print("[%s]: i = %d, filesystem: %s\n", __func__, i, fs->name);
+            break;
+        }
+    }
+
+    return fs;
 }

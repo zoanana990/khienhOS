@@ -6,11 +6,7 @@
 /******************************
  * Static Variable
  ******************************/
-fs_t fat16_fs =
-{
-    .open = fat16_open,
-    .resolve = fat16_resolve,
-};
+fs_t fat16_fs;
 
 /******************************
  * Local Function
@@ -23,14 +19,7 @@ static void fat16_init_private(disk_t *disk, fat_private_t *private)
     private->directory_stream = disk_streamer_new(disk->id);
 }
 
-/******************************
- * Exported function
- ******************************/
-fs_t *fat16_init()
-{
-    strcpy(fat16_fs.name, "FAT16");
-    return &fat16_fs;
-}
+
 
 void fat16_to_proper_string(s8 **out, const s8 *in)
 {
@@ -370,29 +359,7 @@ fat_item_structure_t *fat16_get_directory_entry(disk_t *disk, path_t *path)
 }
 
 /* we can open fat16 files */
-void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode)
-{
-    if(mode != FILE_MODE_READ)
-    {
-        return ERROR(-kerr_RDONLY);
-    }
 
-    fat_file_descriptor_t *descriptor = NULL;
-    descriptor = kzalloc(sizeof(fat_file_descriptor_t));
-    if(descriptor == NULL)
-    {
-        return ERROR(-kerr_NOMEM);
-    }
-
-    descriptor->item = fat16_get_directory_entry(disk, path);
-    if(descriptor->item == NULL)
-    {
-        return ERROR(-kerr_IO);
-    }
-
-    descriptor->pos = 0;
-    return descriptor;
-}
 
 s32 fat16_sector_to_absolute(disk_t *disk, s32 sector)
 {
@@ -495,6 +462,41 @@ s32 fat16_get_root_directory(disk_t *disk, fat_private_t *fat_private, fat_direc
 
     out:
     return ret;
+}
+
+/******************************
+ * Exported function
+ ******************************/
+fs_t *fat16_init()
+{
+    fat16_fs.open = fat16_open,
+            fat16_fs.resolve = fat16_resolve,
+            strcpy(fat16_fs.name, "FAT16");
+    return &fat16_fs;
+}
+
+void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode)
+{
+    if(mode != FILE_MODE_READ)
+    {
+        return ERROR(-kerr_RDONLY);
+    }
+
+    fat_file_descriptor_t *descriptor = NULL;
+    descriptor = kzalloc(sizeof(fat_file_descriptor_t));
+    if(descriptor == NULL)
+    {
+        return ERROR(-kerr_NOMEM);
+    }
+
+    descriptor->item = fat16_get_directory_entry(disk, path);
+    if(descriptor->item == NULL)
+    {
+        return ERROR(-kerr_IO);
+    }
+
+    descriptor->pos = 0;
+    return descriptor;
 }
 
 s32 fat16_resolve(disk_t *disk)
