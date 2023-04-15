@@ -11,6 +11,12 @@ fs_t fat16_fs;
 /******************************
  * Local Function
  ******************************/
+
+/**
+ * @func: fat16_init_private
+ * @disk:
+ * @private:
+ * */
 static void fat16_init_private(disk_t *disk, fat_private_t *private)
 {
     memset(private, 0, sizeof(fat_private_t));
@@ -19,7 +25,51 @@ static void fat16_init_private(disk_t *disk, fat_private_t *private)
     private->directory_stream = disk_streamer_new(disk->id);
 }
 
+s32 fat16_get_total_items_for_directory(disk_t *disk, u32 directory_start_sector)
+{
+    fat_directory_item_t item;
+    fat_directory_item_t empty_item;
+    memset(&empty_item, 0, sizeof(fat_directory_item_t));
 
+    fat_private_t *fat_private = disk->fs_private;
+
+    kerr_no_t ret;
+    s32 i = 0;
+    s32 directory_start_pos = directory_start_sector * disk->sector_size;
+    ds_t *stream = fat_private->directory_stream;
+    if(disk_streamer_seek(stream, directory_start_pos) != kerr_OK)
+    {
+        ret = -kerr_IO;
+        goto out;
+    }
+
+    while(1)
+    {
+        if (disk_streamer_read(stream, &item, sizeof(item)) != kerr_OK)
+        {
+            ret = -kerr_IO;
+            goto out;
+        }
+
+        if (item.filename[0] == 0x00)
+        {
+            /* done */
+            break;
+        }
+
+        /* item is not used*/
+        if (item.filename[0] == 0xE5)
+        {
+            continue;
+        }
+        i++;
+    }
+    ret = i;
+    print("[%s]: i = %d\n", __func__, i);
+
+    out:
+    return ret;
+}
 
 void fat16_to_proper_string(s8 **out, const s8 *in)
 {
@@ -366,51 +416,7 @@ s32 fat16_sector_to_absolute(disk_t *disk, s32 sector)
     return sector * disk->sector_size;
 }
 
-s32 fat16_get_total_items_for_directory(disk_t *disk, u32 directory_start_sector)
-{
-    fat_directory_item_t item;
-    fat_directory_item_t empty_item;
-    memset(&empty_item, 0, sizeof(fat_directory_item_t));
 
-    fat_private_t *fat_private = disk->fs_private;
-
-    kerr_no_t ret = kerr_OK;
-    s32 i = 0;
-    s32 directory_start_pos = directory_start_sector * disk->sector_size;
-    ds_t *stream = fat_private->directory_stream;
-    if(disk_streamer_seek(stream, directory_start_pos) != kerr_OK)
-    {
-        ret = -kerr_IO;
-        goto out;
-    }
-
-    while(1)
-    {
-        if (disk_streamer_read(stream, &item, sizeof(item)) != kerr_OK)
-        {
-            ret = -kerr_IO;
-            goto out;
-        }
-
-        if (item.filename[0] == 0x00)
-        {
-            /* done */
-            break;
-        }
-
-        /* item is not used*/
-        if (item.filename[0] == 0xE5)
-        {
-            continue;
-        }
-        i++;
-    }
-    ret = i;
-    print("[%s]: i = %d\n", __func__, i);
-
-    out:
-    return ret;
-}
 
 s32 fat16_get_root_directory(disk_t *disk, fat_private_t *fat_private, fat_directory_t *directory)
 {
@@ -422,6 +428,9 @@ s32 fat16_get_root_directory(disk_t *disk, fat_private_t *fat_private, fat_direc
     s32 root_dir_size = (root_dir_entries * sizeof(fat_directory_item_t));
     s32 total_sectors = root_dir_size / disk->sector_size;
 
+    print("root_dir_sector_pos = %d, root_dir_entries=%d, root_dir_size=%d, total_sectors=%d\n",
+          root_dir_sector_pos, root_dir_entries, root_dir_size, total_sectors);
+
     /*
      * if our storage bytes are 600 bytes, and one sector is 512 bytes
      * we need to sectors to store our data
@@ -432,6 +441,7 @@ s32 fat16_get_root_directory(disk_t *disk, fat_private_t *fat_private, fat_direc
     }
 
     s32 total_items = fat16_get_total_items_for_directory(disk, root_dir_sector_pos);
+    print("total_item = %d\n", total_items);
 
     fat_directory_item_t *dir = kzalloc(root_dir_size);
     if(dir == NULL)
@@ -467,11 +477,12 @@ s32 fat16_get_root_directory(disk_t *disk, fat_private_t *fat_private, fat_direc
 /******************************
  * Exported function
  ******************************/
+
 fs_t *fat16_init()
 {
     fat16_fs.open = fat16_open,
-            fat16_fs.resolve = fat16_resolve,
-            strcpy(fat16_fs.name, "FAT16");
+    fat16_fs.resolve = fat16_resolve,
+    strcpy(fat16_fs.name, "FAT16");
     return &fat16_fs;
 }
 
@@ -499,6 +510,13 @@ void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode)
     return descriptor;
 }
 
+
+/**
+ * @func: fat16_resolve
+ * @disk: disk
+ * @description:
+ *
+ * */
 s32 fat16_resolve(disk_t *disk)
 {
     kerr_no_t ret = kerr_OK;

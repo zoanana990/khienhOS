@@ -44,6 +44,7 @@ s32 disk_streamer_read(ds_t *stream, void *out, s32 total)
     }
 
     s32 total_to_read = total > KHIENHOS_DISK_SECTOR_SIZE ? KHIENHOS_DISK_SECTOR_SIZE : total;
+
     for(s32 i = 0; i < total_to_read; i++)
     {
         *(s8 *) out++ = buf[offset + i];

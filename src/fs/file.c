@@ -187,8 +187,9 @@ s32 fopen(const s8 *filename, const s8 *mode_str)
 
 /**
  * @func: fs_resolve
- * @disk:
- * @description
+ * @disk: the disk which we put the data on
+ * @description:
+ *
  * */
 fs_t *fs_resolve(disk_t *disk)
 {

@@ -67,6 +67,14 @@ static s32 disk_read_sector(s32 lba, s32 total, void *buf)
     return 0;
 }
 
+/**
+ * @func: disk_search_and_init
+ * @description:
+ *  this is used to initialize the global variable `disk`
+ *  1. set the disk type
+ *  2. set the sector size of the disk
+ *  3. set the filesystem on the disk
+ * */
 void disk_search_and_init()
 {
     memset(&disk, 0, sizeof(disk_t));
@@ -75,12 +83,20 @@ void disk_search_and_init()
     disk.filesystem = fs_resolve(&disk);
 }
 
-disk_t *disk_get(s32 index)
+/**
+ * @func: disk_get
+ * @id: disk id
+ * @description:
+ *  we can get the disk from the given id, however,
+ *  currently we can only get the only disk, disk 0
+ * */
+disk_t *disk_get(s32 id)
 {
-    if(index != 0)
+    if(id != 0)
         return NULL;
     return &disk;
 }
+
 
 s32 disk_read_block(disk_t *local_disk, u32 lba, s32 total, void *buf)
 {

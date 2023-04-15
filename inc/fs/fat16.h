@@ -103,24 +103,25 @@ typedef struct fat_file_descriptor
     u32 pos;
 } fat_file_descriptor_t;
 
+/**
+ * @struct: fat_private
+ * @header
+ * @root_directory:
+ * @cluster_read_stream: Used to stream data clusters
+ * @fat_read_stream: Used to stream the file allocation table
+ * @directory_stream: Used in situations where we stream the directory
+ * */
 typedef struct fat_private
 {
     fat_h_t header;
     fat_directory_t root_directory;
-
-    /* Used to stream data clusters */
     ds_t* cluster_read_stream;
-
-    /* Used to stream the file allocation table */
     ds_t* fat_read_stream;
-
-    /* Used in situations where we stream the directory */
     ds_t* directory_stream;
 } fat_private_t;
 
+fs_t *fat16_init();
 void *fat16_open(disk_t *disk, path_t *path, file_mode_t mode);
 s32   fat16_resolve(disk_t *disk);
-fs_t *fat16_init();
-s32 fat16_get_total_items_for_directory(disk_t *disk, u32 directory_start_sector);
 
 #endif //KHIENHOS_FAT16_H
