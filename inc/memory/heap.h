@@ -14,8 +14,8 @@ typedef u32 heap_block_entry_t;
 
 typedef struct heap_table
 {
-    heap_block_entry_t *entry;
-    size_t             total;
+    heap_block_entry_t *block_entry;
+    size_t              total_entry_count;
 } heap_table_t;
 
 typedef struct heap

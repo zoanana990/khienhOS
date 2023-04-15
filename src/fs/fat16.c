@@ -123,7 +123,7 @@ static s32 fat16_get_cluster_for_offset(disk_t *disk, s32 starting_cluster, s32 
     {
         s32 entry = fat16_get_fat_entry(disk, cluster_to_use);
 
-        /* last entry in the file */
+        /* last block_entry in the file */
         if(entry == 0xFF8 || entry == 0xFFF)
         {
             ret = -kerr_IO;
@@ -313,7 +313,7 @@ fat_item_structure_t *fat16_find_item_in_directory(disk_t *disk, fat_directory_t
 {
     fat_item_structure_t *f_item = NULL;
     s8 temp_filename[KHIENHOS_MAX_PATH_SIZE];
-    print("[%s]: directory total: %d\n", __func__, directory->total);
+    print("[%s]: directory total_entry_count: %d\n", __func__, directory->total);
 
     /* Cannot get into the loop */
     for (s32 i = 0; i < directory->total; i++)
@@ -491,7 +491,7 @@ s32 fat16_get_root_directory(disk_t *disk, fat_private_t *fat_private, fat_direc
     directory->sector_pos = root_dir_sector_pos;
     directory->ending_sector_pos = root_dir_sector_pos + (root_dir_size / disk->sector_size);
 
-    print("[%s]: total_item = %d\n", __func__, total_items);
+    LOG("total_entry_count = %d\n", total_items);
 
     out:
     return ret;

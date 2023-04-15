@@ -14,7 +14,7 @@ typedef u32 fat_item_t;
 #define FAT_ITEM_TYPE_DIRECTORY         0
 #define FAT_ITEM_TYPE_FILE              1
 
-/* Fat directory entry attributes bitmask */
+/* Fat directory block_entry attributes bitmask */
 #define FAT_FILE_READ_ONLY              0x01
 #define FAT_FILE_HIDDEN                 0x02
 #define FAT_FILE_SYSTEM                 0x04

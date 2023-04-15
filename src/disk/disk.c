@@ -25,7 +25,7 @@ static s32 disk_read_sector(s32 lba, s32 total, void *buf)
     outb(0x1f6, (lba >> 24) | 0xe0);
 
     /**
-     * 0x1f2 is used to assign the total amount of read/write sector
+     * 0x1f2 is used to assign the total_entry_count amount of read/write sector
      * */
     outb(0x1f2, total);
 

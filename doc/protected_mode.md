@@ -80,9 +80,9 @@ Interrupt Gate Types
 |-----------------------------|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 80386 32 bit task gate      | 0x05/0b0101 | Tasks gates reference TSS descriptors and cons can assist in multitasking when exceptions occur                                                            |
 | 80386 16 bit interrupt gate | 0x06/0b0110 | Interrupts gates are to be used for interrupts that we want ot invoke ourselves in our code                                                                |
-| 80386 16 bit trap gate      | 0x07/0b0111 | Trap gates are like interrupt gates however they are used for exceptions. They also disable interrupts on entry and reenable them on an `iret` instruction |
+| 80386 16 bit trap gate      | 0x07/0b0111 | Trap gates are like interrupt gates however they are used for exceptions. They also disable interrupts on block_entry and reenable them on an `iret` instruction |
 | 80386 32 bit interrupt gate | 0x0E/0b1110 | Interrupts gates are to be used for interrupts that we want ot invoke ourselves in our code                                                                |
-| 80386 32 bit trap gate      | 0x0F/0b1111 | Trap gates are like interrupt gates however they are used for exceptions. They also disable interrupts on entry and reenable them on an `iret` instruction |
+| 80386 32 bit trap gate      | 0x0F/0b1111 | Trap gates are like interrupt gates however they are used for exceptions. They also disable interrupts on block_entry and reenable them on an `iret` instruction |
 
 Interrupt descriptors are stored in an array with index 0 defining interrupt zero `intr. 0` ..., index 1 
 ```c
@@ -204,7 +204,7 @@ void free(void *ptr)
 
 ### Our heap implementation
 - Will consist of a giant table which describes a giant of free memory in the system.  
-  This table will describe which memory is taken, which memory is free and so on. We will call it "entry table"
+  This table will describe which memory is taken, which memory is free and so on. We will call it "block_entry table"
 - Will have another pointer to a giant piece of the memory, this will be the actual heap data its itself 
   that users can use `malloc`. We will cal this "data pool". If our heap can allocate 100 MB of RAM 
   then the heap data pool will be 100 MB in size
@@ -213,26 +213,26 @@ void free(void *ptr)
 - If you request to have 50 bytes, there are 4096 bytes for you
 
 ### Entry table
-- Composes of an array of 1 byte values that represent an entry in our heap data pool
+- Composes of an array of 1 byte values that represent an block_entry in our heap data pool
 - Array size is calculated by taking the heap data pool size and dividing it by our block size of 4096 bytes.
-  we are left with the total number of entries we need in our array
+  we are left with the total_entry_count number of entries we need in our array
 
-> we want a 100MB heap then the math is 100MB/4096 = 25600 bytes in our entry table
-> if our heap data pool is at address `0x1000000` then entry zero in our table will represent address `0x1000000`
-> Entry one will represent address `0x1001000`, and entry two will represent `0x1002000`
+> we want a 100MB heap then the math is 100MB/4096 = 25600 bytes in our block_entry table
+> if our heap data pool is at address `0x1000000` then block_entry zero in our table will represent address `0x1000000`
+> Entry one will represent address `0x1001000`, and block_entry two will represent `0x1002000`
 
 #### Entry structure
 | HAS_N | IS_FIRST | 0   | 0   | ET_3   | ET_2   | ET_1   | ET_0 |
 |-------|----------|-----|-----|--------|--------|--------|------|
 
 Where
-- HAS_N: set if the entry to the right of us is part of our allocation
-- IS_FIRST: set if there is the first entry of our allocation
-> Each entry byte describes 4096 bytes of data in the heap data pool
+- HAS_N: set if the block_entry to the right of us is part of our allocation
+- IS_FIRST: set if there is the first block_entry of our allocation
+> Each block_entry byte describes 4096 bytes of data in the heap data pool
 
 Entry types:
-- HEAP_BLOCK_TABLE_ENTRY_TAKEN : The entry is taken and the address cannot be used
-- HEAP_BLOCK_TABLE_ENTRY_FREE  : The entry is free and may be used
+- HEAP_BLOCK_TABLE_ENTRY_TAKEN : The block_entry is taken and the address cannot be used
+- HEAP_BLOCK_TABLE_ENTRY_FREE  : The block_entry is free and may be used
 
 Data pool:
 - Simply a raw flat array of thousands or millions of bytes that our heap implementation can give to people who need memory
@@ -243,9 +243,9 @@ A example
 
 ### Free
 - Calculate the block number based on the address provided to us to free
-- Go through the entry table starting at the block number we have calculated, set each entry to "0x00" until 
+- Go through the block_entry table starting at the block number we have calculated, set each block_entry to "0x00" until 
   we reach the last block of the allocation
-- We know how many blocks we need to free because the current block we are freeing will not have the "HAS_N" bit set in the entry byte
+- We know how many blocks we need to free because the current block we are freeing will not have the "HAS_N" bit set in the block_entry byte
 
 ### pros and cons
 pros
@@ -283,7 +283,7 @@ Structure overview:
 
 - 1024 pages directories point to 1024 pages tables
 - 1024 pages table entries per page table
-- each page table entry covers 4096 bytes of memory
+- each page table block_entry covers 4096 bytes of memory
 - each "4096" byte block of memory is called a page
 - 1024 * 1024 * 4096 = 4GB of addressable memory
 - Thus, the page directory structure
@@ -368,7 +368,7 @@ FAT16 (File Allocation Table) 16 bits
 - Now we have our first file allocation table, this table contains values that represent which clusters on the disk are 
   taken and which are free (A cluster is just a certain number of sectors joined together to represent one cluster)
 - Next comes our second file allocation table it's optional though and depends on the FAT16 header in the boot sector
-- Now comes our root directory, this explains what files/directories are in the root directory of the filesystem, Each entry
+- Now comes our root directory, this explains what files/directories are in the root directory of the filesystem, Each block_entry
   has a relative name that represent the file or directory name, attribute such as read only, the address of the first 
   cluster representing the data on the disk.
 - Finally, we have our data region, all the data is here
@@ -403,7 +403,7 @@ FAT16 disk layout:
 | Data cluster   | -                                                                 |
 
 FAT16 file allocation table explained
-- Each entry in the table is 2 bytes long and represents a cluster in the data clusters region that is available or taken
+- Each block_entry in the table is 2 bytes long and represents a cluster in the data clusters region that is available or taken
 - Clusters can chain together, for example a file larger than one cluster will use two clusters. The value that represents
   the first cluster in the file allocation table will contain the value of next cluster. The final cluster will contain a value of
   0xffff signifying that there are no more cluster
@@ -435,7 +435,7 @@ struct fat_directory_item
 
 - Attribute field contains flags that determine item is a file, or a directory. If it's read only etc.
 - If the directory item represents a file, then the first cluster points to the start of the file data.
-  if it's representing a directory, then its first cluster will point to a cluster that has directory entry.
+  if it's representing a directory, then its first cluster will point to a cluster that has directory block_entry.
 
 Iterating through directories
 - In the boot sector contains the maximum number of a root directory entries, we should not exceed this

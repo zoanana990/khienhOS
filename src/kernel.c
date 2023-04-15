@@ -47,6 +47,7 @@ void kernel_main()
     {
         print("fopen successfully\n");
     }
+    print("hello""hello\n");
 
     while(1) {}
 }

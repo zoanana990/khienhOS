@@ -109,11 +109,11 @@ ata_lba_read:
     out dx, al
     ; Finished sending the highest 8 bits of the lba
 
-    ; Send the total sectors to read
+    ; Send the total_entry_count sectors to read
     mov eax, ecx
     mov dx, 0x1F2
     out dx, al
-    ; Finished sending the total sectors to read
+    ; Finished sending the total_entry_count sectors to read
 
     ; Send more bits of the LBA
     mov eax, ebx ; Restore the backup LBA

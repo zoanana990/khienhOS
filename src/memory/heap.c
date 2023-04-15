@@ -8,7 +8,7 @@ static kerr_no_t heap_validate_table(void *ptr, void *end, heap_table_t *table)
     size_t table_size = (size_t)(end - ptr);
     size_t total_blocks = table_size / KHIENHOS_HEAP_BLOCK_SIZE;
 
-    if(table->total != total_blocks)
+    if(table->total_entry_count != total_blocks)
     {
         ret = kerr_INVARG;
         goto out;
@@ -39,7 +39,7 @@ static u32 heap_alloc_value_align(u32 val)
 
 kerr_no_t heap_create(heap_t *heap, void *ptr, void *end, heap_table_t *table)
 {
-    kerr_no_t ret = kerr_OK;
+    kerr_no_t ret;
 
     if(!heap_is_alignment(ptr) || !heap_is_alignment(end))
     {
@@ -59,8 +59,8 @@ kerr_no_t heap_create(heap_t *heap, void *ptr, void *end, heap_table_t *table)
     }
 
     /* initialize the heap region to free */
-    size_t table_size = sizeof(heap_block_entry_t) * table->total;
-    memset(table->entry, HEAP_BLOCK_TABLE_ENTRY_FREE, table_size);
+    size_t table_size = sizeof(heap_block_entry_t) * table->total_entry_count;
+    memset(table->block_entry, HEAP_BLOCK_TABLE_ENTRY_FREE, table_size);
 
 out:
     return ret;
@@ -86,9 +86,9 @@ s32 heap_get_start_block(heap_t *heap, u32 total_blocks)
     int bs = -1;
 
     /* traverse all the heap region */
-    for(size_t i = 0; i < table->total; i++)
+    for(size_t i = 0; i < table->total_entry_count; i++)
     {
-        if(heap_get_entry_type(table->entry[i]) != HEAP_BLOCK_TABLE_ENTRY_FREE)
+        if(heap_get_entry_type(table->block_entry[i]) != HEAP_BLOCK_TABLE_ENTRY_FREE)
         {
             bc = 0, bs = -1;
             continue;
@@ -126,7 +126,7 @@ void heap_mask_blocks_taken(heap_t *heap, s32 start_block, s32 total_blocks)
 
     for(s32 i = 0; i <= end_block; i++)
     {
-        heap->table->entry[i] = entry;
+        heap->table->block_entry[i] = entry;
         entry = HEAP_BLOCK_TABLE_ENTRY_TAKEN;
         if(i != end_block - 1)
         {
@@ -169,10 +169,10 @@ s32 heap_address_to_block(heap_t *heap, void *address)
 void heap_free_block(heap_t *heap, u32 starting_block)
 {
     heap_table_t *table = heap->table;
-    for(s32 i = starting_block; i < (int)table->total; i++)
+    for(s32 i = starting_block; i < (int)table->total_entry_count; i++)
     {
-        heap_block_entry_t entry = table->entry[i];
-        table->entry[i] = HEAP_BLOCK_TABLE_ENTRY_FREE;
+        heap_block_entry_t entry = table->block_entry[i];
+        table->block_entry[i] = HEAP_BLOCK_TABLE_ENTRY_FREE;
         if(!(entry & HEAP_BLOCK_HAS_NEXT))
         {
             break;

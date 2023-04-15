@@ -41,6 +41,11 @@ void console_write_char(s8 c, s8 color)
     }
 }
 
+/**
+ * @func: console_init
+ * @description:
+ *      Write the screen register 0xB800 to put the character and the color out.
+ * */
 void console_init()
 {
     video_mem = (u16*)(0xB8000);
@@ -152,14 +157,4 @@ void print(s8 *str, ...)
         va_end(va);
     }
 }
-
-/* not really realize the va_... macros */
-void print_dbg(s8 *str, ...)
-{
-    va_list args;
-    va_start(args, str);
-    print("[%s]: %s",__func__, args);
-    va_end(args);
-}
-
 /* TODO need to identify the message by using different color */

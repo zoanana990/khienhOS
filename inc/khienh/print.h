@@ -20,7 +20,16 @@ typedef enum
 
 /* TODO : do all printf function in print */
 void print(s8 *str, ...);
-void print_dbg(s8 *str, ...);
+
+
+
+/**
+ * @func: console_init
+ * @description:
+ *      Write the screen register 0xB800 to put the character and the color out.
+ * */
 void console_init();
+
+#define LOG(fmt, args...) print("\r[%s]:" fmt, __func__, ##args)
 
 #endif //KHIENHOS_PRINT_H

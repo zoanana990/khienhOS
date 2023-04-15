@@ -36,19 +36,18 @@ void fs_insert_filesystem(fs_t *filesystem)
 static void fs_static_load()
 {
     fs_insert_filesystem(fat16_init());
-    return;
 }
 
-void fs_load()
-{
-    memset(filesystems, 0, sizeof(filesystems));
-    fs_static_load();
-}
-
+/**
+ * @func: fs_init
+ * @description:
+ *      the filesystem initialization.
+ * */
 void fs_init()
 {
     memset(file_descriptors, 0, sizeof(file_descriptors));
-    fs_load();
+    memset(filesystems, 0, sizeof(filesystems));
+    fs_static_load();
 }
 
 static kerr_no_t file_new_descriptor(fd_t **desc_out)

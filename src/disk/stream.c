@@ -22,6 +22,14 @@ s32 disk_streamer_seek(ds_t *stream, s32 pos)
     return 0;
 }
 
+/**
+ * @func: disk_streamer_read
+ * @stream
+ * @out
+ * @total
+ *
+ * @description
+ * */
 s32 disk_streamer_read(ds_t *stream, void *out, s32 total)
 {
     /* disk sector and offset */

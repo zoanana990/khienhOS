@@ -3,12 +3,20 @@
 heap_t kernel_heap;
 heap_table_t kernel_heap_table;
 
-/* initialize the heap region */
+/**
+ * @func: kheap_init
+ * @description:
+ *      initialize the heap region
+ *      set the block size is 4096 bytes, and there are 4096 entries
+ *      start address = 0x 1000000
+ *      size          = 0x10000000
+ *      end address   = 0x11000000
+ * */
 void kheap_init()
 {
     u32 total_table_entry = (u32) KHIENHOS_HEAP_MAX_SIZE / KHIENHOS_HEAP_BLOCK_SIZE;
-    kernel_heap_table.entry = (heap_block_entry_t *)(KHIENHOS_HEAP_TABLE_ADDR);
-    kernel_heap_table.total = total_table_entry;
+    kernel_heap_table.block_entry = (heap_block_entry_t *)(KHIENHOS_HEAP_TABLE_ADDR);
+    kernel_heap_table.total_entry_count = total_table_entry;
 
     void *start = (void *) KHIENHOS_HEAP_START_ADDR;
     void *end = (void *)(KHIENHOS_HEAP_START_ADDR + KHIENHOS_HEAP_MAX_SIZE);

@@ -3,7 +3,7 @@
 
 #include <khienh/type.h>
 
-/*** Paging table entry
+/*** Paging table block_entry
  * Reference: https://wiki.osdev.org/Paging
  * [bit 12 - 31]: address
  * [bit 09 - 11]: AVL, available bit
@@ -29,9 +29,9 @@
 #define PAGING_SIZE                     4096
 
 /*** page structure
- * each page directory entry -> page table (1024) -> physical table (4096)
+ * each page directory block_entry -> page table (1024) -> physical table (4096)
  *
- * There are 1024 page directory entry, so the total memory is 4 GB
+ * There are 1024 page directory block_entry, so the total_entry_count memory is 4 GB
  * */
 
 typedef struct paging_4gb_chunk
