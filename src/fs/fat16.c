@@ -370,8 +370,9 @@ fat_item_structure_t *fat16_find_item_in_directory(disk_t *disk, fat_directory_t
 
 fat_item_structure_t *fat16_get_directory_entry(disk_t *disk, path_t *path)
 {
-    print("[%s]\n", __func__);
     fat_private_t *fat_private = disk->fs_private;
+
+    print("fat_private->root_directory->total = %d\n", fat_private->root_directory.total);
 
     /**
      * What we are doing here?
@@ -547,11 +548,15 @@ s32 fat16_resolve(disk_t *disk)
         goto out;
     }
 
+    LOG("fat_private->directory->total = %d\n", fat_private->root_directory.total);
+
     if (fat16_get_root_directory(disk, fat_private, &fat_private->root_directory) != kerr_OK)
     {
         ret = -kerr_IO;
         goto out;
     }
+
+    LOG("fat_private->directory->total = %d\n", fat_private->root_directory.total);
 
     out:
     if(stream)
@@ -562,7 +567,7 @@ s32 fat16_resolve(disk_t *disk)
     if(ret < 0)
     {
         kfree(fat_private);
-        disk->fs_private = 0;
+        disk->fs_private = NULL;
     }
 
     return ret;

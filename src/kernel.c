@@ -21,6 +21,9 @@ void kernel_main()
     /* initialize and search the disk */
     disk_search_and_init();
 
+//    disk_t *primary_disk = disk_get(0);
+//    print("primary_disk->fs_private->");
+
     /* Initialize the idt */
     idt_init();
 

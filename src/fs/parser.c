@@ -124,7 +124,6 @@ path_root_t* path_parser_parse(const s8* path, const s8* current_directory_path)
 
     const s8* tmp_path = path;
     path_root_t *path_root = NULL;
-    print("[%s]: temp path = %s\n", __func__, tmp_path);
 
     /* check the path length */
     if(strlen(path) > KHIENHOS_MAX_PATH)
@@ -139,7 +138,6 @@ path_root_t* path_parser_parse(const s8* path, const s8* current_directory_path)
         path_root = NULL;
         goto out;
     }
-    print("[%s]: after path_parser..., temp path = %s\n", __func__, tmp_path);
 
     /* create a root path e.g. 0:/, 1:/ etc.
      *
@@ -163,7 +161,6 @@ path_root_t* path_parser_parse(const s8* path, const s8* current_directory_path)
     {
         goto out;
     }
-    print("[%s]: after path_parser_path_part..., temp path = %s\n", __func__, first_part->part);
 
     path_root->head = first_part;
     path_t *part = path_parser_path_part(first_part, &tmp_path);

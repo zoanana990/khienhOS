@@ -33,7 +33,6 @@ void fs_insert_filesystem(fs_t *filesystem)
     fs = fs_get_free_filesystem();
     if(!fs)
     {
-        print("Insert filesystem error, system pending!!!\n");
         while(1);
     }
 
